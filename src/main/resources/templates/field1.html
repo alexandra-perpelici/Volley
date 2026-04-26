@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Field Reservations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .reserved {
+            background-color: #f8d7da !important;
+            color: #721c24;
+            font-weight: bold;
+        }
+        .available {
+            background-color: #d4edda !important;
+            color: #155724;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Overlay for blurred background */
+        #popupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            z-index: 1040;
+        }
+
+        /* Popup */
+        #reservationPopup {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 2px solid #333;
+            padding: 20px;
+            z-index: 1050;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border-radius: 8px;
+
+            /* Fade-in animation */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #reservationPopup.show {
+            opacity: 1;
+        }
+
+        /* Toast notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 10px;
+            position: fixed;
+            z-index: 1060;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+
+    <!-- Logout -->
+    <div class="d-flex justify-content-end mb-3">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-outline-danger">Logout</button>
+        </form>
+    </div>
+
+    <!-- Message -->
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+            <tr>
+                <th>Time</th>
+                <th th:each="day : ${days}" th:text="${#temporals.format(day, 'EEEE dd-MM-yyyy')}">Day</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="timeSlot : ${timeSlots}">
+                <td th:text="${timeSlot}"></td>
+                <td th:each="day : ${days}"
+                    th:class="${reservation_matrix[#temporals.format(day,'dd-MM-yyyy') + ' ' + timeSlot]} ? 'reserved' : 'available'"
+                    th:text="${reservation_matrix[#temporals.format(day,'dd-MM-yyyy') + ' ' + timeSlot]} ? 'Reserved' : 'Available'"
+                    th:attr="data-date=${#temporals.format(day,'dd-MM-yyyy')}, data-time=${timeSlot}, data-field=${fieldNumber}">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="d-flex justify-content-between mt-3 flex-wrap">
+        <form th:action="@{/home}" method="get" class="mb-2">
+            <button type="submit" class="btn btn-secondary btn-lg">Back to Home</button>
+        </form>
+
+        <form th:action="@{/cart/view}" method="get" class="mb-2">
+            <input type="hidden" name="fieldNumber" th:value="${fieldNumber}" />
+            <button type="submit" class="btn btn-success btn-lg">Go to Cart</button>
+        </form>
+    </div>
+
+</div>
+
+<!-- Overlay for blurred background -->
+<div id="popupOverlay"></div>
+
+<!-- Hidden form to add to cart -->
+<form id="addToCartForm" th:action="@{/cart/add}" method="post" style="display:none;">
+    <input type="hidden" name="reservationDate" id="cartReservationDate">
+    <input type="hidden" name="reservationTime" id="cartReservationTime">
+    <input type="hidden" name="fieldNumber" id="cartFieldNumber">
+</form>
+
+<!-- Popup for confirmation -->
+<div id="reservationPopup">
+    <h3>Confirm Reservation</h3>
+    <p id="popupSlot"></p>
+    <p>Price: 20 lei</p>
+    <div class="d-flex justify-content-between mt-3">
+        <button id="popupYesBtn" class="btn btn-success">Add to cart</button>
+        <button id="popupNoBtn" class="btn btn-danger">Cancel</button>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<script>
+    const cells = document.querySelectorAll("td.available, td.reserved");
+    const popup = document.getElementById("reservationPopup");
+    const overlay = document.getElementById("popupOverlay");
+
+    cells.forEach(cell => {
+        cell.addEventListener("click", () => {
+            if (cell.classList.contains("reserved")) {
+                showToast("This slot is already reserved!");
+                return;
+            }
+
+            const date = cell.getAttribute("data-date");
+            const time = cell.getAttribute("data-time");
+            const fieldNumber = cell.getAttribute("data-field");
+
+            document.getElementById("popupSlot").innerText = "Slot: " + date + " " + time;
+
+            // Show popup & overlay with fade-in
+            overlay.style.display = "block";
+            popup.style.display = "block";
+            setTimeout(() => popup.classList.add("show"), 10); // trigger fade-in
+
+            document.getElementById("popupYesBtn").onclick = () => {
+                document.getElementById("cartReservationDate").value = date;
+                document.getElementById("cartReservationTime").value = time;
+                document.getElementById("cartFieldNumber").value = fieldNumber;
+                document.getElementById("addToCartForm").submit();
+
+                hidePopup();
+            };
+
+            document.getElementById("popupNoBtn").onclick = hidePopup;
+        });
+    });
+
+    function hidePopup() {
+        popup.classList.remove("show");
+        setTimeout(() => {
+            popup.style.display = "none";
+            overlay.style.display = "none";
+        }, 300); // wait for fade-out
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.innerText = message;
+        toast.style.visibility = "visible";
+        setTimeout(() => {
+            toast.style.visibility = "hidden";
+        }, 2500);
+    }
+
+    function updateReservationMatrix() {
+        const fieldNumber = /*[[${fieldNumber}]]*/ '1';
+
+        fetch(`/field/${fieldNumber}/matrix`)
+            .then(res => res.json())
+            .then(matrix => {
+                document.querySelectorAll("td.available, td.reserved").forEach(cell => {
+                    const date = cell.getAttribute("data-date");
+                    const time = cell.getAttribute("data-time");
+                    const key = date + " " + time;
+                    if (matrix[key]) {
+                        cell.classList.remove("available");
+                        cell.classList.add("reserved");
+                        cell.innerText = "Reserved";
+                    } else {
+                        cell.classList.remove("reserved");
+                        cell.classList.add("available");
+                        cell.innerText = "Available";
+                    }
+                });
+            });
+    }
+
+    setInterval(updateReservationMatrix, 30000);
+    updateReservationMatrix();
+</script>
+
+</body>
+</html>

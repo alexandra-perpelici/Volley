@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;" id="registerCard">
+        <h3 class="card-title text-center mb-3" id="registerTitle">Register</h3>
+
+        <form th:action="@{/register}"
+              th:object="${registrationRequest}"
+              method="post"
+              autocomplete="off"
+              id="registerForm">
+
+            <div class="mb-3">
+                <label class="form-label" for="usernameInput">Username</label>
+                <input
+                        type="text"
+                        id="usernameInput"
+                        th:field="*{username}"
+                        class="form-control"
+                        required
+                        autocomplete="new-username">
+                <p th:if="${#fields.hasErrors('username')}"
+                   th:errors="*{username}"
+                   class="text-danger"
+                   id="usernameError"></p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="passwordInput">Password</label>
+                <input
+                        type="password"
+                        id="passwordInput"
+                        th:field="*{password}"
+                        class="form-control"
+                        required
+                        autocomplete="new-password">
+                <p th:if="${#fields.hasErrors('password')}"
+                   th:errors="*{password}"
+                   class="text-danger"
+                   id="passwordError"></p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="confirmPasswordInput">Confirm Password</label>
+                <input
+                        type="password"
+                        id="confirmPasswordInput"
+                        th:field="*{confirmPassword}"
+                        class="form-control"
+                        required>
+                <p th:if="${#fields.hasErrors('confirmPassword')}"
+                   th:errors="*{confirmPassword}"
+                   class="text-danger"
+                   id="confirmPasswordError"></p>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-success w-100"
+                    id="registerButton">
+                Register
+            </button>
+        </form>
+
+        <p th:if="${errorMessage}"
+           class="text-danger mt-2"
+           th:text="${errorMessage}"
+           id="registerErrorMessage"></p>
+
+        <p th:if="${successMessage}"
+           class="text-success mt-2"
+           th:text="${successMessage}"
+           id="registerSuccessMessage"></p>
+
+        <form th:action="@{/login}"
+              method="get"
+              class="mt-3"
+              id="backToLoginForm">
+            <button type="submit"
+                    class="btn btn-secondary w-100"
+                    id="backToLoginButton">
+                Back to Login
+            </button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
