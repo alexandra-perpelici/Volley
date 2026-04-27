@@ -22,7 +22,8 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity (enable later for production)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/img/**", "/js/**", "/registry/payments/**").permitAll()
+                        .requestMatchers("/login", "/register", "/css/**", "/img/**", "/js/**", "/manifest.webmanifest", "/sw.js", "/api/push/public-key", "/registry/payments/**").permitAll()
+                        .requestMatchers("/api/push/**").hasRole("ADMIN")
                         .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                         .requestMatchers("/home", "/field/**", "/cart/**", "/payments/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()

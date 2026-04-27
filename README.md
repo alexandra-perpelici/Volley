@@ -21,3 +21,21 @@ $env:SUPABASE_PUBLISHABLE_KEY="sb_publishable_zkjleEMVcxTcHWc-vG09qA_F1sjsSjx"
 ```
 
 The schema initializer creates `users`, `courts`, and `reservations`, and seeds two volleyball courts.
+
+## Push Notification Setup
+
+The Android installable app is a PWA. Admin users can install it from Chrome and enable alerts for new reservations.
+
+Set these environment variables in Render to activate push delivery:
+
+```text
+VAPID_PUBLIC_KEY=<generated-public-key>
+VAPID_PRIVATE_KEY=<generated-private-key>
+VAPID_SUBJECT=mailto:your-email@example.com
+```
+
+Generate a key pair with:
+
+```powershell
+npx --yes web-push generate-vapid-keys
+```

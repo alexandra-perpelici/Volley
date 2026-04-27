@@ -1,15 +1,17 @@
 package com.example.volley_reservations.service;
 
 import com.example.volley_reservations.dto.ReservationRequest;
+import com.example.volley_reservations.event.ReservationNotificationEvent;
 import com.example.volley_reservations.model.Payment;
 import com.example.volley_reservations.model.Reservation;
 import com.example.volley_reservations.repository.ReservationRepository;
 import com.example.volley_reservations.repository.UserRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,10 +20,14 @@ import java.util.stream.Collectors;
 public class ReservationService {
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository) {
+    public ReservationService(ReservationRepository reservationRepository,
+                              UserRepository userRepository,
+                              ApplicationEventPublisher eventPublisher) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public boolean isReservedField1(String key)
@@ -73,7 +79,16 @@ public class ReservationService {
     public String createNewReservation(ReservationRequest request)
     {
         try {
-            createReservation(request, null);
+            Reservation reservation = createReservation(request, null);
+            eventPublisher.publishEvent(new ReservationNotificationEvent(
+                    reservation.getUser().getUsername(),
+                    20,
+                    List.of(new ReservationNotificationEvent.ReservationNotificationSlot(
+                            reservation.getReservation_date(),
+                            reservation.getReservation_time(),
+                            reservation.getField_number()
+                    ))
+            ));
             return "Reservation Created";
         } catch (IllegalArgumentException | IllegalStateException exception) {
             return exception.getMessage();

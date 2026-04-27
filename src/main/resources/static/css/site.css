@@ -94,6 +94,17 @@ p {
     flex-wrap: wrap;
 }
 
+.push-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding-inline: 4px;
+    color: var(--teal-dark);
+    font-size: 0.84rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
 .split-actions {
     justify-content: space-between;
 }
@@ -1000,9 +1011,14 @@ legend {
     .action-bar form,
     .split-actions form,
     .topbar-actions .btn,
+    .topbar-actions .push-status,
     .action-bar .btn,
     .split-actions .btn {
         width: 100%;
+    }
+
+    .topbar-actions .push-status {
+        justify-content: center;
     }
 
     .court-grid,
