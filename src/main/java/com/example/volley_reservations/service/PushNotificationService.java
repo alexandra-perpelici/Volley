@@ -6,9 +6,13 @@ import com.example.volley_reservations.model.WebPushSubscription;
 import com.example.volley_reservations.repository.WebPushSubscriptionRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.martijndwars.webpush.Encoding;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
-import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -122,20 +126,17 @@ public class PushNotificationService {
                     payload.getBytes(StandardCharsets.UTF_8),
                     TTL_SECONDS
             );
-            HttpResponse response = getPushService().send(notification);
-            int statusCode = response.getStatusLine().getStatusCode();
-            String reason = response.getStatusLine().getReasonPhrase();
-            String responseBody = readResponseBody(response);
-            if (statusCode == 403 || statusCode == 404 || statusCode == 410) {
+            PushSendResult result = sendModern(notification);
+            if (result.statusCode() == 403 || result.statusCode() == 404 || result.statusCode() == 410) {
                 disableSubscription(savedSubscription);
             }
-            if (statusCode >= 400) {
+            if (result.statusCode() >= 400) {
                 LOGGER.warn(
                         "Push notification failed for subscription {} with status {} {}. Body: {}",
                         savedSubscription.getSubscriptionId(),
-                        statusCode,
-                        reason,
-                        responseBody
+                        result.statusCode(),
+                        result.reason(),
+                        result.body()
                 );
             }
         } catch (Exception exception) {
@@ -157,16 +158,30 @@ public class PushNotificationService {
         }
     }
 
-    private String readResponseBody(HttpResponse response) throws IOException {
-        if (response.getEntity() == null) {
-            return "";
+    private PushSendResult sendModern(Notification notification) throws IOException, GeneralSecurityException, org.jose4j.lang.JoseException {
+        HttpPost httpPost = getPushService().preparePost(notification, Encoding.AES128GCM);
+        httpPost.removeHeaders("Crypto-Key");
+
+        try (CloseableHttpClient httpClient = HttpClients.createSystem();
+             CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            String body = "";
+            if (response.getEntity() != null) {
+                body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            }
+            return new PushSendResult(
+                    response.getStatusLine().getStatusCode(),
+                    response.getStatusLine().getReasonPhrase(),
+                    body
+            );
         }
-        return EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
     }
 
     private void disableSubscription(WebPushSubscription subscription) {
         subscription.setActive(false);
         subscription.setDisabledAt(LocalDateTime.now());
         subscriptionRepository.save(subscription);
+    }
+
+    private record PushSendResult(int statusCode, String reason, String body) {
     }
 }
