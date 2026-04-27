@@ -54,6 +54,7 @@
             document.getElementById("cartReservationDate").value = card.dataset.date;
             document.getElementById("cartReservationTime").value = card.dataset.time;
             document.getElementById("cartFieldNumber").value = card.dataset.field;
+            window.VolleyNavigationCache?.clear();
             document.getElementById("addToCartForm").submit();
         };
     }

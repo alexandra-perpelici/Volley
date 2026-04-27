@@ -2,9 +2,8 @@ package com.example.volley_reservations.controller;
 
 import com.example.volley_reservations.model.Reservation;
 import com.example.volley_reservations.model.TemporaryReservation;
-import com.example.volley_reservations.model.User;
 import com.example.volley_reservations.repository.ReservationRepository;
-import com.example.volley_reservations.repository.UserRepository;
+import com.example.volley_reservations.security.CustomUserDetails;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import com.example.volley_reservations.service.UserBlacklistService;
 import org.springframework.security.core.Authentication;
@@ -19,16 +18,13 @@ import java.util.List;
 @Controller
 public class ProfileController {
 
-    private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final TemporaryReservationService temporaryReservationService;
     private final UserBlacklistService blacklistService;
 
-    public ProfileController(UserRepository userRepository,
-                             ReservationRepository reservationRepository,
+    public ProfileController(ReservationRepository reservationRepository,
                              TemporaryReservationService temporaryReservationService,
                              UserBlacklistService blacklistService) {
-        this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
         this.temporaryReservationService = temporaryReservationService;
         this.blacklistService = blacklistService;
@@ -36,9 +32,10 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String profile(Model model, Authentication authentication) {
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        CustomUserDetails userDetails = currentUserDetails(authentication);
+        Integer userId = userDetails.getUserId();
         LocalDate today = LocalDate.now();
-        List<Reservation> reservations = reservationRepository.findReservationsForUser(user.getUser_id());
+        List<Reservation> reservations = reservationRepository.findReservationsForUser(userId);
         List<Reservation> upcomingReservations = reservations.stream()
                 .filter(reservation -> !Reservation.STATUS_CANCELLED.equals(reservation.getStatus()))
                 .filter(reservation -> !reservation.getReservation_date().isBefore(today))
@@ -50,16 +47,23 @@ public class ProfileController {
                         || Reservation.STATUS_CANCELLED.equals(reservation.getStatus()))
                 .limit(8)
                 .toList();
-        List<TemporaryReservation> cart = temporaryReservationService.getUserReservations(user.getUser_id());
+        List<TemporaryReservation> cart = temporaryReservationService.getUserReservations(userId);
 
-        model.addAttribute("user", user);
+        model.addAttribute("username", userDetails.getUsername());
         model.addAttribute("upcomingReservations", upcomingReservations);
         model.addAttribute("reservationHistory", reservationHistory);
         model.addAttribute("reservationCount", reservations.size());
         model.addAttribute("upcomingCount", upcomingReservations.size());
         model.addAttribute("selectedCount", cart.size());
         model.addAttribute("selectedTotal", cart.size() * 20);
-        model.addAttribute("activeBlacklist", blacklistService.findActiveForUser(user).orElse(null));
+        model.addAttribute("activeBlacklist", blacklistService.findActiveForUserId(userId).orElse(null));
         return "profile";
+    }
+
+    private CustomUserDetails currentUserDetails(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
+            return userDetails;
+        }
+        throw new IllegalStateException("Authenticated user details unavailable");
     }
 }

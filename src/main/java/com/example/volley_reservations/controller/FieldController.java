@@ -1,8 +1,7 @@
 package com.example.volley_reservations.controller;
 
 import com.example.volley_reservations.dto.ReservationRequest;
-import com.example.volley_reservations.model.User;
-import com.example.volley_reservations.repository.UserRepository;
+import com.example.volley_reservations.security.CustomUserDetails;
 import com.example.volley_reservations.service.ReservationService;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import org.springframework.security.core.Authentication;
@@ -23,11 +22,9 @@ public class FieldController {
 
     private final ReservationService reservationService;
     private final TemporaryReservationService tempService;
-    private final UserRepository userRepository;
 
-    public FieldController(ReservationService reservationService,UserRepository userRepository,TemporaryReservationService tempService) {
+    public FieldController(ReservationService reservationService, TemporaryReservationService tempService) {
         this.reservationService = reservationService;
-        this.userRepository = userRepository;
         this.tempService = tempService;
     }
 
@@ -91,21 +88,9 @@ public class FieldController {
             return "redirect:/home";
         }
 
-        // 1. Get username from authentication
-        String username = authentication.getName();
-
-        // 2. Fetch user from DB
-        Optional<User> dbUser = userRepository.findByUsername(username);
-        if (dbUser.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "User not found!");
-            return "redirect:/login";
-        }
-
-        // 3. Use the real user_id
-        request.setUser_id(dbUser.get().getUser_id());
+        request.setUser_id(currentUserId(authentication));
         request.setField_number(fieldNumber);
 
-        // 4. Create reservation
         String resultMessage = reservationService.createNewReservation(request);
         redirectAttributes.addFlashAttribute("message", resultMessage);
 
@@ -228,9 +213,14 @@ public class FieldController {
             return Collections.emptyList();
         }
 
-        return userRepository.findByUsername(authentication.getName())
-                .map(user -> tempService.getUserReservations(user.getUser_id()))
-                .orElseGet(Collections::emptyList);
+        return tempService.getUserReservations(currentUserId(authentication));
+    }
+
+    private Integer currentUserId(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
+            return userDetails.getUserId();
+        }
+        throw new IllegalStateException("Authenticated user details unavailable");
     }
 
     private Map<String, Boolean> buildReservationMatrix(int fieldNumber, List<LocalDate> days, List<String> timeSlots) {

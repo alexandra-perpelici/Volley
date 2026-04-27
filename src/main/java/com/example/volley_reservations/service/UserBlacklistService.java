@@ -30,7 +30,15 @@ public class UserBlacklistService {
         if (user == null || user.getUser_id() == null) {
             return Optional.empty();
         }
-        return blacklistRepository.findActiveForUser(user.getUser_id(), LocalDateTime.now());
+        return findActiveForUserId(user.getUser_id());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserBlacklistEntry> findActiveForUserId(Integer userId) {
+        if (userId == null) {
+            return Optional.empty();
+        }
+        return blacklistRepository.findActiveForUser(userId, LocalDateTime.now());
     }
 
     @Transactional(readOnly = true)
@@ -41,6 +49,16 @@ public class UserBlacklistService {
     @Transactional(readOnly = true)
     public void validateUserCanReserve(User user) {
         Optional<UserBlacklistEntry> activeBlacklist = findActiveForUser(user);
+        validateActiveBlacklist(activeBlacklist);
+    }
+
+    @Transactional(readOnly = true)
+    public void validateUserCanReserve(Integer userId) {
+        Optional<UserBlacklistEntry> activeBlacklist = findActiveForUserId(userId);
+        validateActiveBlacklist(activeBlacklist);
+    }
+
+    private void validateActiveBlacklist(Optional<UserBlacklistEntry> activeBlacklist) {
         if (activeBlacklist.isPresent()) {
             UserBlacklistEntry entry = activeBlacklist.get();
             throw new IllegalStateException("This account is blacklisted from reservations until "

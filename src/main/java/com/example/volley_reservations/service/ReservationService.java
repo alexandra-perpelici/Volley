@@ -10,18 +10,24 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
+    private static final Duration RESERVED_SLOT_CACHE_TTL = Duration.ofSeconds(15);
+
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final ConcurrentMap<ReservedSlotCacheKey, ReservedSlotCacheEntry> reservedSlotCache = new ConcurrentHashMap<>();
 
     public ReservationService(ReservationRepository reservationRepository,
                               UserRepository userRepository,
@@ -58,16 +64,26 @@ public class ReservationService {
     }
 
     public Set<String> findReservedSlotKeys(int fieldNumber, LocalDate startDate, LocalDate endDate) {
+        ReservedSlotCacheKey cacheKey = new ReservedSlotCacheKey(fieldNumber, startDate, endDate);
+        ReservedSlotCacheEntry cachedEntry = reservedSlotCache.get(cacheKey);
+        if (cachedEntry != null && !cachedEntry.isExpired()) {
+            return cachedEntry.slotKeys();
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         List<Reservation> reservations = reservationRepository.findReservationsForFieldBetweenDates(fieldNumber, startDate, endDate);
 
-        return reservations.stream()
+        Set<String> slotKeys = reservations.stream()
                 .map(reservation -> reservation.getReservation_date().format(formatter) + " " + reservation.getReservation_time())
                 .collect(Collectors.toSet());
+        Set<String> immutableSlotKeys = Set.copyOf(slotKeys);
+        reservedSlotCache.put(cacheKey, new ReservedSlotCacheEntry(immutableSlotKeys));
+        return immutableSlotKeys;
     }
 
     public void deleteReservation(int reservationId) {
         reservationRepository.deleteById(reservationId);
+        reservedSlotCache.clear();
     }
 
 
@@ -75,6 +91,7 @@ public class ReservationService {
     public void deleteOldReservations(){
         LocalDate today = LocalDate.now();
         reservationRepository.deleteAllBeforeToday(today);
+        reservedSlotCache.clear();
 
     }
 
@@ -106,7 +123,9 @@ public class ReservationService {
         reservation.setField_number(request.getField_number());
         reservation.setPayment(payment);
 
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+        reservedSlotCache.clear();
+        return savedReservation;
     }
 
     private void validateReservation(ReservationRequest request) {
@@ -116,6 +135,19 @@ public class ReservationService {
 
         if (reservationRepository.existsSlot(request.getReservation_date(), request.getReservation_time(), request.getField_number())) {
             throw new IllegalStateException("Reservation already exists for this court and time slot!");
+        }
+    }
+
+    private record ReservedSlotCacheKey(int fieldNumber, LocalDate startDate, LocalDate endDate) {
+    }
+
+    private record ReservedSlotCacheEntry(Set<String> slotKeys, long expiresAtMillis) {
+        ReservedSlotCacheEntry(Set<String> slotKeys) {
+            this(slotKeys, System.currentTimeMillis() + RESERVED_SLOT_CACHE_TTL.toMillis());
+        }
+
+        boolean isExpired() {
+            return System.currentTimeMillis() > expiresAtMillis;
         }
     }
 

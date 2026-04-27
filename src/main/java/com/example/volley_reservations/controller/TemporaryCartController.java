@@ -4,6 +4,7 @@ import com.example.volley_reservations.model.Payment;
 import com.example.volley_reservations.model.TemporaryReservation;
 import com.example.volley_reservations.model.User;
 import com.example.volley_reservations.repository.UserRepository;
+import com.example.volley_reservations.security.CustomUserDetails;
 import com.example.volley_reservations.service.PaymentService;
 import com.example.volley_reservations.service.ReservationService;
 import com.example.volley_reservations.service.TemporaryReservationService;
@@ -71,15 +72,15 @@ public class TemporaryCartController {
             return "redirect:/home";
         }
 
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        Integer userId = currentUserId(authentication);
         try {
-            blacklistService.validateUserCanReserve(user);
+            blacklistService.validateUserCanReserve(userId);
         } catch (IllegalStateException exception) {
             redirectAttributes.addFlashAttribute("message", exception.getMessage());
             return "redirect:/field/" + fieldNumber;
         }
 
-        boolean success = tempResService.addTemporaryReservation(user.getUser_id(), reservationDate, reservationTime, fieldNumber);
+        boolean success = tempResService.addTemporaryReservation(userId, reservationDate, reservationTime, fieldNumber);
 
         if (!success) {
             redirectAttributes.addFlashAttribute("message", "This slot is temporarily locked by another user.");
@@ -99,14 +100,14 @@ public class TemporaryCartController {
             Model model,
             Authentication authentication) {
 
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        Integer userId = currentUserId(authentication);
 
-        List<TemporaryReservation> cart = tempResService.getUserReservations(user.getUser_id());
+        List<TemporaryReservation> cart = tempResService.getUserReservations(userId);
         model.addAttribute("cart", cart);
         model.addAttribute("totalPrice", cart.size() * 20);
         model.addAttribute("selectedCount", cart.size());
         model.addAttribute("selectedTotal", cart.size() * 20);
-        model.addAttribute("activeBlacklist", blacklistService.findActiveForUser(user).orElse(null));
+        model.addAttribute("activeBlacklist", blacklistService.findActiveForUserId(userId).orElse(null));
         model.addAttribute("source", source);
 
 
@@ -130,8 +131,7 @@ public class TemporaryCartController {
                                  RedirectAttributes redirectAttributes,
                                  HttpSession session) {
 
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
-        tempResService.removeReservation(user.getUser_id(),
+        tempResService.removeReservation(currentUserId(authentication),
                 new TemporaryReservation(reservationDate, reservationTime, fieldNumber, null));
 
         if ("home".equals(source)) {
@@ -159,8 +159,9 @@ public class TemporaryCartController {
                               Authentication authentication,
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
+        Integer userId = currentUserId(authentication);
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
-        List<TemporaryReservation> cart = tempResService.getUserReservations(user.getUser_id());
+        List<TemporaryReservation> cart = tempResService.getUserReservations(userId);
 
         try {
             blacklistService.validateUserCanReserve(user);
@@ -181,6 +182,13 @@ public class TemporaryCartController {
 
     private boolean isSupportedCourt(int fieldNumber) {
         return fieldNumber == 1 || fieldNumber == 2;
+    }
+
+    private Integer currentUserId(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
+            return userDetails.getUserId();
+        }
+        throw new IllegalStateException("Authenticated user details unavailable");
     }
 
 

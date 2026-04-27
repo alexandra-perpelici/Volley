@@ -1,8 +1,7 @@
 package com.example.volley_reservations.controller;
 
 import com.example.volley_reservations.model.TemporaryReservation;
-import com.example.volley_reservations.model.User;
-import com.example.volley_reservations.repository.UserRepository;
+import com.example.volley_reservations.security.CustomUserDetails;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import com.example.volley_reservations.service.UserBlacklistService;
 import org.springframework.security.core.Authentication;
@@ -15,14 +14,11 @@ import java.util.List;
 @Controller
 public class LoginController {
 
-    private final UserRepository userRepository;
     private final TemporaryReservationService temporaryReservationService;
     private final UserBlacklistService blacklistService;
 
-    public LoginController(UserRepository userRepository,
-                           TemporaryReservationService temporaryReservationService,
+    public LoginController(TemporaryReservationService temporaryReservationService,
                            UserBlacklistService blacklistService) {
-        this.userRepository = userRepository;
         this.temporaryReservationService = temporaryReservationService;
         this.blacklistService = blacklistService;
     }
@@ -34,14 +30,21 @@ public class LoginController {
 
     @GetMapping("/home")
     public String homePage(Model model, Authentication authentication) {
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
-        List<TemporaryReservation> cart = temporaryReservationService.getUserReservations(user.getUser_id());
+        Integer userId = currentUserId(authentication);
+        List<TemporaryReservation> cart = temporaryReservationService.getUserReservations(userId);
 
         model.addAttribute("cart", cart);
         model.addAttribute("selectedCount", cart.size());
         model.addAttribute("selectedTotal", cart.size() * 20);
-        model.addAttribute("activeBlacklist", blacklistService.findActiveForUser(user).orElse(null));
+        model.addAttribute("activeBlacklist", blacklistService.findActiveForUserId(userId).orElse(null));
         return "home";
+    }
+
+    private Integer currentUserId(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
+            return userDetails.getUserId();
+        }
+        throw new IllegalStateException("Authenticated user details unavailable");
     }
 
 }
