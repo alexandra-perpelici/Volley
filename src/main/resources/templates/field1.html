@@ -1,78 +1,159 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0f5258">
     <title>Court 1 Reservations</title>
+    <link rel="manifest" th:href="@{/manifest.webmanifest}">
+    <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link th:href="@{/css/site.css}" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="bg-light schedule-page">
 
-<main class="container py-4 app-shell schedule-shell">
-    <header class="app-topbar schedule-topbar">
-        <div>
-            <p class="eyebrow">Court 1</p>
-            <h1 class="mb-0">Court 1 Schedule</h1>
-            <p class="lead-copy">Seven-day schedule with 90-minute beach volley slots.</p>
-        </div>
-        <div class="topbar-actions">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-outline-danger">Logout</button>
-            </form>
-        </div>
-    </header>
-
-    <div th:if="${message}" class="alert alert-warning">
-        <p th:text="${message}"></p>
-    </div>
-
-    <section class="schedule-toolbar" aria-label="Schedule status">
-        <div class="status-legend">
-            <span class="legend-item"><span class="legend-dot"></span>Available</span>
-            <span class="legend-item"><span class="legend-dot reserved-dot"></span>Reserved</span>
-        </div>
-        <span class="price-pill">20 lei / slot</span>
-    </section>
-
-    <div class="table-responsive schedule-scroll">
-        <table class="table table-bordered table-hover text-center schedule-table">
-            <thead class="table-dark">
-            <tr>
-                <th scope="col">Time</th>
-                <th scope="col" th:each="day : ${days}">
-                    <span class="schedule-day">
-                        <span class="day-name" th:text="${#temporals.format(day, 'EEE')}">Mon</span>
-                        <span class="day-date" th:text="${#temporals.format(day, 'dd MMM')}">01 Jan</span>
-                    </span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="timeSlot : ${timeSlots}">
-                <td class="time-cell" th:text="${timeSlot}"></td>
-                <td class="slot-cell"
-                    th:classappend="${reservation_matrix[#temporals.format(day,'dd-MM-yyyy') + ' ' + timeSlot]} ? 'reserved' : 'available'"
-                    th:each="day : ${days}"
-                    th:text="${reservation_matrix[#temporals.format(day,'dd-MM-yyyy') + ' ' + timeSlot]} ? 'Reserved' : 'Available'"
-                    th:attr="data-date=${#temporals.format(day,'dd-MM-yyyy')}, data-time=${timeSlot}, data-field=${fieldNumber}">
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="split-actions">
-        <form th:action="@{/home}" method="get">
-            <button type="submit" class="btn btn-secondary btn-lg">Back to Home</button>
+<div class="booking-layout">
+    <aside class="booking-sidebar" aria-label="Main navigation">
+        <a class="brand-lockup" th:href="@{/home}">
+            <span class="brand-mark">VB</span>
+            <span>VolleyBook</span>
+        </a>
+        <nav class="booking-nav">
+            <a th:href="@{/home}">Dashboard</a>
+            <a th:href="@{/field/1}" th:classappend="${fieldNumber == 1} ? ' active'">Court 1</a>
+            <a th:href="@{/field/2}" th:classappend="${fieldNumber == 2} ? ' active'">Court 2</a>
+            <a th:href="@{/cart/view(fieldNumber=${fieldNumber})}">Cart</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
+        </nav>
+        <form th:action="@{/logout}" method="post" class="sidebar-logout">
+            <button type="submit">Logout</button>
         </form>
+    </aside>
 
-        <form th:action="@{/cart/view}" method="get">
-            <input type="hidden" name="fieldNumber" th:value="${fieldNumber}" />
-            <button type="submit" class="btn btn-success btn-lg">Go to Cart</button>
-        </form>
+    <main class="booking-main">
+        <header class="court-header">
+            <div>
+                <div class="mobile-back-row">
+                    <a th:href="@{/home}" aria-label="Back to home">&larr;</a>
+                    <span>VolleyBook</span>
+                </div>
+                <p class="eyebrow">Court <span th:text="${fieldNumber}">1</span></p>
+                <h1>Court <span th:text="${fieldNumber}">1</span></h1>
+                <div class="court-meta" aria-label="Court details">
+                    <span>Indoor</span>
+                    <span>Volleyball</span>
+                    <span>90 minute slots</span>
+                    <span>20 lei / slot</span>
+                </div>
+            </div>
+            <div class="court-header-actions">
+                <form th:action="@{/home}" method="get">
+                    <button type="submit" class="btn btn-secondary">Dashboard</button>
+                </form>
+                <form th:action="@{/cart/view}" method="get">
+                    <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
+                    <button type="submit" class="btn btn-success">My Cart</button>
+                </form>
+            </div>
+        </header>
+
+        <div th:if="${message}" class="alert alert-success">
+            <p th:text="${message}"></p>
+        </div>
+
+        <section class="booking-workspace">
+            <div class="schedule-card-ui">
+                <div class="day-strip" aria-label="Choose a day">
+                    <button type="button"
+                            class="day-tab"
+                            th:each="day, dayStat : ${days}"
+                            th:classappend="${dayStat.first} ? ' active'"
+                            th:attr="data-day-index=${dayStat.index}">
+                        <span class="day-tab-name" th:text="${dayStat.first ? 'Today' : #temporals.format(day, 'EEE')}">Today</span>
+                        <span class="day-tab-date" th:text="${#temporals.format(day, 'MMM dd')}">May 20</span>
+                    </button>
+                </div>
+
+                <div class="day-panels">
+                    <div class="day-schedule-panel"
+                         th:each="day, dayStat : ${days}"
+                         th:classappend="${dayStat.first} ? ' active'"
+                         th:attr="data-day-index=${dayStat.index}">
+                        <section class="slot-period" th:each="group : ${timeSlotGroups}" th:if="${!group.slots().isEmpty()}">
+                            <header class="slot-period-header">
+                                <h2 th:text="${group.label()}">Morning</h2>
+                                <span th:text="${group.window()}">08:00 - 12:30</span>
+                            </header>
+                            <div class="slot-card-grid">
+                                <button type="button"
+                                        class="slot-card"
+                                        th:each="timeSlot : ${group.slots()}"
+                                        th:with="matrixKey=${#temporals.format(day,'dd-MM-yyyy') + ' ' + timeSlot},
+                                                 isSelected=${selected_slot_keys.contains(#temporals.format(day,'dd-MM-yyyy') + ' ' + timeSlot + ' ' + fieldNumber)},
+                                                 isReserved=${reservation_matrix[#temporals.format(day,'dd-MM-yyyy') + ' ' + timeSlot]}"
+                                        th:classappend="${isSelected} ? ' selected' : (${isReserved} ? ' reserved' : ' available')"
+                                        th:attr="data-date=${#temporals.format(day,'dd-MM-yyyy')},
+                                                 data-display-date=${#temporals.format(day,'dd MMM yyyy')},
+                                                 data-time=${timeSlot},
+                                                 data-field=${fieldNumber},
+                                                 data-key=${matrixKey},
+                                                 data-selected=${isSelected}">
+                                    <span class="slot-time" th:text="${timeSlot}">08:00 - 09:30</span>
+                                    <span class="slot-status" th:text="${isSelected} ? 'Selected' : (${isReserved} ? 'Reserved' : 'Available')">Available</span>
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="cart-rail" aria-label="Selected reservations">
+                <div class="cart-rail-header">
+                    <div>
+                        <p class="eyebrow">Cart</p>
+                        <h2>Selected</h2>
+                    </div>
+                    <strong th:text="${selectedCount} + ' items'">0 items</strong>
+                </div>
+
+                <div th:if="${cart.isEmpty()}" class="empty-cart-note">
+                    Tap an available slot to add it here.
+                </div>
+
+                <div th:if="${!cart.isEmpty()}" class="cart-line-list">
+                    <div class="cart-line" th:each="res : ${cart}">
+                        <div>
+                            <strong th:text="${res.time}">08:00 - 09:30</strong>
+                            <span th:text="${#temporals.format(res.date, 'dd MMM yyyy') + ' - Court ' + res.fieldNumber}">20 May - Court 1</span>
+                        </div>
+                        <span>20 lei</span>
+                    </div>
+                </div>
+
+                <div class="cart-rail-total">
+                    <span>Total</span>
+                    <strong th:text="${selectedTotal} + ' lei'">0 lei</strong>
+                </div>
+
+                <form th:action="@{/cart/view}" method="get">
+                    <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
+                    <button type="submit" class="btn btn-success btn-lg w-100">Go to Cart</button>
+                </form>
+            </aside>
+        </section>
+    </main>
+</div>
+
+<div class="mobile-cart-bar">
+    <div>
+        <strong>Selected</strong>
+        <span th:text="${selectedCount + ' items - ' + selectedTotal + ' lei'}">0 items - 0 lei</span>
     </div>
-</main>
+    <form th:action="@{/cart/view}" method="get">
+        <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
+        <button type="submit">Cart</button>
+    </form>
+</div>
 
 <div id="popupOverlay"></div>
 
@@ -84,7 +165,7 @@
 
 <div id="reservationPopup" role="dialog" aria-modal="true" aria-labelledby="reservationPopupTitle">
     <p class="eyebrow">Reservation</p>
-    <h3 id="reservationPopupTitle">Confirm Reservation</h3>
+    <h3 id="reservationPopupTitle">Add Slot</h3>
     <p id="popupSlot" class="slot-summary"></p>
     <p class="mb-3"><strong>Price:</strong> 20 lei</p>
     <div class="modal-actions">
@@ -95,84 +176,7 @@
 
 <div id="toast"></div>
 
-<script>
-    const cells = document.querySelectorAll("td.available, td.reserved");
-    const popup = document.getElementById("reservationPopup");
-    const overlay = document.getElementById("popupOverlay");
-
-    cells.forEach(cell => {
-        cell.addEventListener("click", () => {
-            if (cell.classList.contains("reserved")) {
-                showToast("This slot is already reserved!");
-                return;
-            }
-
-            const date = cell.getAttribute("data-date");
-            const time = cell.getAttribute("data-time");
-            const fieldNumber = cell.getAttribute("data-field");
-
-            document.getElementById("popupSlot").innerText = "Slot: " + date + " " + time;
-
-            overlay.style.display = "block";
-            popup.style.display = "block";
-            setTimeout(() => popup.classList.add("show"), 10);
-
-            document.getElementById("popupYesBtn").onclick = () => {
-                document.getElementById("cartReservationDate").value = date;
-                document.getElementById("cartReservationTime").value = time;
-                document.getElementById("cartFieldNumber").value = fieldNumber;
-                document.getElementById("addToCartForm").submit();
-
-                hidePopup();
-            };
-
-            document.getElementById("popupNoBtn").onclick = hidePopup;
-        });
-    });
-
-    function hidePopup() {
-        popup.classList.remove("show");
-        setTimeout(() => {
-            popup.style.display = "none";
-            overlay.style.display = "none";
-        }, 300);
-    }
-
-    function showToast(message) {
-        const toast = document.getElementById("toast");
-        toast.innerText = message;
-        toast.style.visibility = "visible";
-        setTimeout(() => {
-            toast.style.visibility = "hidden";
-        }, 2500);
-    }
-
-    function updateReservationMatrix() {
-        const fieldNumber = /*[[${fieldNumber}]]*/ '1';
-
-        fetch(`/field/${fieldNumber}/matrix`)
-            .then(res => res.json())
-            .then(matrix => {
-                document.querySelectorAll("td.available, td.reserved").forEach(cell => {
-                    const date = cell.getAttribute("data-date");
-                    const time = cell.getAttribute("data-time");
-                    const key = date + " " + time;
-                    if (matrix[key]) {
-                        cell.classList.remove("available");
-                        cell.classList.add("reserved");
-                        cell.innerText = "Reserved";
-                    } else {
-                        cell.classList.remove("reserved");
-                        cell.classList.add("available");
-                        cell.innerText = "Available";
-                    }
-                });
-            });
-    }
-
-    setInterval(updateReservationMatrix, 30000);
-    updateReservationMatrix();
-</script>
+<script th:src="@{/js/field-schedule.js}"></script>
 
 </body>
 </html>

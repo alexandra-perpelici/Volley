@@ -620,6 +620,389 @@ legend {
     background-color: rgba(212, 107, 77, 0.16) !important;
 }
 
+.schedule-page {
+    background:
+        linear-gradient(180deg, rgba(247, 252, 249, 0.94), rgba(255, 253, 248, 0.98)),
+        url("/img/beach-volleyball-bg.png") center / cover fixed;
+}
+
+.booking-layout {
+    display: grid;
+    grid-template-columns: 184px minmax(0, 1fr);
+    width: min(100% - 32px, 1560px);
+    min-height: calc(100vh - 32px);
+    margin: 16px auto;
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.booking-sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 22px 14px;
+    color: #fff;
+    background: linear-gradient(180deg, #075d61, #063f43);
+}
+
+.brand-lockup,
+.booking-nav a,
+.sidebar-logout button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.62rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.brand-lockup {
+    margin-bottom: 18px;
+    font-size: 1.02rem;
+}
+
+.brand-lockup:hover,
+.brand-lockup:focus,
+.booking-nav a:hover,
+.booking-nav a:focus,
+.booking-nav a.active,
+.sidebar-logout button:hover,
+.sidebar-logout button:focus {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.brand-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 999px;
+    font-size: 0.72rem;
+}
+
+.booking-nav {
+    display: grid;
+    gap: 8px;
+}
+
+.sidebar-logout {
+    margin-top: auto;
+}
+
+.sidebar-logout button {
+    border: 0;
+    background: transparent;
+}
+
+.booking-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+    padding: 26px 28px 30px;
+}
+
+.court-header,
+.court-header-actions,
+.mobile-back-row,
+.court-meta {
+    display: flex;
+    align-items: center;
+}
+
+.court-header {
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+}
+
+.court-header h1 {
+    margin: 0;
+    font-size: 2.15rem;
+}
+
+.court-header-actions {
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mobile-back-row {
+    display: none;
+}
+
+.court-meta {
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.court-meta span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0.35rem 0.62rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    background: rgba(246, 248, 247, 0.94);
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.booking-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 18px;
+    align-items: start;
+}
+
+.schedule-card-ui {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+}
+
+.day-strip {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(98px, 1fr));
+    gap: 8px;
+    padding: 14px;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.day-tab {
+    display: grid;
+    place-items: center;
+    min-height: 58px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--ink);
+    background: transparent;
+    font-weight: 800;
+}
+
+.day-tab.active {
+    color: #fff;
+    background: var(--teal-dark);
+    box-shadow: var(--shadow-soft);
+}
+
+.day-tab-name,
+.day-tab-date {
+    display: block;
+    line-height: 1.15;
+}
+
+.day-tab-date {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.day-tab.active .day-tab-date {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.day-panels {
+    padding: 18px;
+}
+
+.day-schedule-panel {
+    display: none;
+}
+
+.day-schedule-panel.active {
+    display: block;
+}
+
+.slot-period + .slot-period {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+}
+
+.slot-period-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.slot-period-header h2 {
+    margin: 0;
+    font-size: 1.18rem;
+}
+
+.slot-period-header span {
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.slot-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.slot-card {
+    display: grid;
+    gap: 4px;
+    min-height: 62px;
+    padding: 0.72rem 0.8rem;
+    border: 1px solid rgba(38, 143, 94, 0.45);
+    border-radius: 8px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.82);
+    text-align: center;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.slot-card:hover,
+.slot-card:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+}
+
+.slot-card .slot-time {
+    font-weight: 900;
+}
+
+.slot-card .slot-status {
+    color: #176c45;
+    font-size: 0.84rem;
+    font-weight: 800;
+}
+
+.slot-card.selected {
+    border-color: var(--teal-dark);
+    color: #fff;
+    background: var(--teal-dark);
+}
+
+.slot-card.selected .slot-status {
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.slot-card.reserved {
+    border-color: rgba(212, 107, 77, 0.36);
+    color: #b21f2d !important;
+    background: rgba(212, 107, 77, 0.12) !important;
+}
+
+.slot-card.reserved .slot-status {
+    color: #b21f2d;
+}
+
+.cart-rail {
+    position: sticky;
+    top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 420px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.cart-rail-header,
+.cart-rail-total,
+.cart-line {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cart-rail-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.cart-rail-header strong,
+.cart-rail-total strong {
+    color: var(--teal-dark);
+}
+
+.empty-cart-note {
+    padding: 16px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 8px;
+    color: var(--muted);
+    background: rgba(223, 243, 234, 0.34);
+    font-weight: 700;
+}
+
+.cart-line-list {
+    display: grid;
+    gap: 10px;
+    max-height: 270px;
+    overflow: auto;
+}
+
+.cart-line {
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(247, 250, 249, 0.92);
+}
+
+.cart-line strong,
+.cart-line span {
+    display: block;
+}
+
+.cart-line span {
+    color: var(--muted);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.cart-rail-total {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.mobile-cart-bar {
+    display: none;
+}
+
+@media (max-width: 1180px) {
+    .booking-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-rail {
+        position: static;
+        min-height: 0;
+    }
+
+    .slot-card-grid {
+        grid-template-columns: repeat(3, minmax(130px, 1fr));
+    }
+}
+
 .checkout-panel,
 .detail-panel,
 .payment-panel {
@@ -972,6 +1355,11 @@ legend {
         background-attachment: scroll;
     }
 
+    body.schedule-page {
+        padding-bottom: 86px;
+        background: #f6faf9;
+    }
+
     h1 {
         font-size: 1.85rem;
     }
@@ -993,6 +1381,193 @@ legend {
 
     .app-shell {
         gap: 18px;
+    }
+
+    .booking-layout {
+        display: block;
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .booking-sidebar {
+        display: none;
+    }
+
+    .booking-main {
+        gap: 14px;
+        padding: 0 0 22px;
+    }
+
+    .court-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 14px;
+        padding: 18px 16px 20px;
+        border-bottom: 0;
+        color: #fff;
+        background: linear-gradient(180deg, #075d61, #0f5258);
+    }
+
+    .court-header h1,
+    .court-header .eyebrow {
+        color: #fff;
+        text-align: center;
+    }
+
+    .court-header h1 {
+        font-size: 1.55rem;
+    }
+
+    .court-header .eyebrow {
+        margin-top: 6px;
+    }
+
+    .mobile-back-row {
+        display: flex;
+        justify-content: space-between;
+        color: #fff;
+        font-weight: 900;
+    }
+
+    .mobile-back-row a {
+        color: #fff;
+        font-size: 1.4rem;
+        line-height: 1;
+        text-decoration: none;
+    }
+
+    .court-meta {
+        justify-content: center;
+    }
+
+    .court-meta span {
+        min-height: 30px;
+        border-color: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 0.76rem;
+    }
+
+    .court-header-actions {
+        display: none;
+    }
+
+    .booking-main > .alert {
+        margin: 12px 12px 0;
+    }
+
+    .booking-workspace {
+        display: block;
+    }
+
+    .schedule-card-ui {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .day-strip {
+        position: sticky;
+        top: 0;
+        z-index: 6;
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 10px 22px rgba(18, 50, 56, 0.08);
+    }
+
+    .day-tab {
+        flex: 0 0 82px;
+        min-height: 54px;
+        background: rgba(247, 250, 249, 0.9);
+    }
+
+    .day-panels {
+        padding: 16px 12px;
+    }
+
+    .slot-period + .slot-period {
+        margin-top: 18px;
+        padding-top: 18px;
+    }
+
+    .slot-period-header {
+        margin-bottom: 10px;
+    }
+
+    .slot-period-header h2 {
+        font-size: 1rem;
+    }
+
+    .slot-period-header span {
+        font-size: 0.86rem;
+    }
+
+    .slot-card-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .slot-card {
+        min-height: 58px;
+        padding: 0.58rem 0.35rem;
+    }
+
+    .slot-card .slot-time {
+        font-size: 0.78rem;
+        line-height: 1.2;
+    }
+
+    .slot-card .slot-status {
+        font-size: 0.72rem;
+    }
+
+    .cart-rail {
+        display: none;
+    }
+
+    .mobile-cart-bar {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1030;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 74px;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        color: #fff;
+        background: var(--teal-dark);
+        box-shadow: 0 -12px 28px rgba(18, 50, 56, 0.18);
+    }
+
+    .mobile-cart-bar strong,
+    .mobile-cart-bar span {
+        display: block;
+        color: #fff;
+    }
+
+    .mobile-cart-bar span {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .mobile-cart-bar button {
+        min-width: 112px;
+        min-height: 46px;
+        border: 0;
+        border-radius: 8px;
+        color: #fff;
+        background: var(--gold);
+        font-weight: 900;
     }
 
     .app-topbar,

@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/field")
@@ -22,7 +23,7 @@ public class FieldController {
 
     private final ReservationService reservationService;
     private final TemporaryReservationService tempService;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public FieldController(ReservationService reservationService,UserRepository userRepository,TemporaryReservationService tempService) {
         this.reservationService = reservationService;
@@ -33,13 +34,13 @@ public class FieldController {
 
 
     @GetMapping("/{fieldNumber}")
-    public String showField(@PathVariable int fieldNumber, Model model)
+    public String showField(@PathVariable int fieldNumber, Model model, Authentication authentication)
     {
         if (!isSupportedCourt(fieldNumber)) {
             return "redirect:/home";
         }
 
-        populateModel(model, fieldNumber);
+        populateModel(model, fieldNumber, authentication);
         if (fieldNumber == 1)
             return "field1";
         if(fieldNumber == 2)
@@ -155,16 +156,28 @@ public class FieldController {
 //    }
 
 
-    private void populateModel(Model model, int fieldNumber) {
+    private void populateModel(Model model, int fieldNumber, Authentication authentication) {
         LocalDate today = LocalDate.now();
         List<LocalDate> nextDays = createScheduleDays(today);
         List<String> timeSlots = createTimeSlots();
         Map<String, Boolean> reservationMatrix = buildReservationMatrix(fieldNumber, nextDays, timeSlots);
+        List<com.example.volley_reservations.model.TemporaryReservation> cart = findCurrentCart(authentication);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        Set<String> selectedSlotKeys = cart.stream()
+                .map(reservation -> reservation.getDate().format(dateFormatter)
+                        + " " + reservation.getTime()
+                        + " " + reservation.getFieldNumber())
+                .collect(Collectors.toSet());
 
         model.addAttribute("timeSlots", timeSlots);
+        model.addAttribute("timeSlotGroups", createTimeSlotGroups(timeSlots));
         model.addAttribute("days", nextDays);
         model.addAttribute("reservation_matrix", reservationMatrix);
         model.addAttribute("fieldNumber", fieldNumber);
+        model.addAttribute("cart", cart);
+        model.addAttribute("selected_slot_keys", selectedSlotKeys);
+        model.addAttribute("selectedCount", cart.size());
+        model.addAttribute("selectedTotal", cart.size() * 20);
     }
 
     private List<LocalDate> createScheduleDays(LocalDate startDate) {
@@ -185,6 +198,39 @@ public class FieldController {
             startTime = nextTime;
         }
         return timeSlots;
+    }
+
+    private List<TimeSlotGroup> createTimeSlotGroups(List<String> timeSlots) {
+        List<String> morning = new ArrayList<>();
+        List<String> afternoon = new ArrayList<>();
+        List<String> evening = new ArrayList<>();
+
+        for (String timeSlot : timeSlots) {
+            int startHour = Integer.parseInt(timeSlot.substring(0, 2));
+            if (startHour < 12) {
+                morning.add(timeSlot);
+            } else if (startHour < 18) {
+                afternoon.add(timeSlot);
+            } else {
+                evening.add(timeSlot);
+            }
+        }
+
+        return List.of(
+                new TimeSlotGroup("Morning", "08:00 - 12:30", morning),
+                new TimeSlotGroup("Afternoon", "12:30 - 18:30", afternoon),
+                new TimeSlotGroup("Evening", "18:30 - 20:00", evening)
+        );
+    }
+
+    private List<com.example.volley_reservations.model.TemporaryReservation> findCurrentCart(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Collections.emptyList();
+        }
+
+        return userRepository.findByUsername(authentication.getName())
+                .map(user -> tempService.getUserReservations(user.getUser_id()))
+                .orElseGet(Collections::emptyList);
     }
 
     private Map<String, Boolean> buildReservationMatrix(int fieldNumber, List<LocalDate> days, List<String> timeSlots) {
@@ -208,6 +254,9 @@ public class FieldController {
 
     private boolean isSupportedCourt(int fieldNumber) {
         return fieldNumber == 1 || fieldNumber == 2;
+    }
+
+    public record TimeSlotGroup(String label, String window, List<String> slots) {
     }
 
 }

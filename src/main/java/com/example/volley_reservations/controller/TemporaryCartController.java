@@ -86,9 +86,8 @@ public class TemporaryCartController {
             return "redirect:/field/" + fieldNumber;
         }
 
-        redirectAttributes.addAttribute("fieldNumber", fieldNumber);
-        // Redirect with fieldNumber as query parameter
-        return "redirect:/cart/view";
+        redirectAttributes.addFlashAttribute("message", "Slot added to your cart.");
+        return "redirect:/field/" + fieldNumber;
     }
 
     // Show the cart
