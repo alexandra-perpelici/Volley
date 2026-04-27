@@ -61,6 +61,15 @@
 
         const existingSubscription = await serviceWorkerRegistration.pushManager.getSubscription();
         if (existingSubscription) {
+            if (!subscriptionUsesCurrentKey(existingSubscription)) {
+                await existingSubscription.unsubscribe();
+                if (Notification.permission === "granted") {
+                    await subscribeForPush();
+                    return;
+                }
+                setPushStatus("Alerts need refresh");
+                return;
+            }
             await saveSubscription(existingSubscription);
             markSubscribed();
         } else if (Notification.permission === "denied") {
@@ -154,6 +163,29 @@
         if (pushStatus) {
             pushStatus.textContent = message;
         }
+    }
+
+    function subscriptionUsesCurrentKey(subscription) {
+        const applicationServerKey = subscription.options?.applicationServerKey;
+        if (!applicationServerKey) {
+            return false;
+        }
+
+        return arrayBufferToBase64Url(applicationServerKey) === normalizeBase64Url(vapidPublicKey);
+    }
+
+    function arrayBufferToBase64Url(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        bytes.forEach(byte => {
+            binary += String.fromCharCode(byte);
+        });
+
+        return normalizeBase64Url(window.btoa(binary));
+    }
+
+    function normalizeBase64Url(value) {
+        return value.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
     }
 
     function urlBase64ToUint8Array(base64String) {

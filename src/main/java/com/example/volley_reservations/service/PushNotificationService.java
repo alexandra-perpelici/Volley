@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,10 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Security;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -122,10 +124,19 @@ public class PushNotificationService {
             );
             HttpResponse response = getPushService().send(notification);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 404 || statusCode == 410) {
+            String reason = response.getStatusLine().getReasonPhrase();
+            String responseBody = readResponseBody(response);
+            if (statusCode == 403 || statusCode == 404 || statusCode == 410) {
                 disableSubscription(savedSubscription);
-            } else if (statusCode >= 400) {
-                LOGGER.warn("Push notification failed for subscription {} with status {}", savedSubscription.getSubscriptionId(), statusCode);
+            }
+            if (statusCode >= 400) {
+                LOGGER.warn(
+                        "Push notification failed for subscription {} with status {} {}. Body: {}",
+                        savedSubscription.getSubscriptionId(),
+                        statusCode,
+                        reason,
+                        responseBody
+                );
             }
         } catch (Exception exception) {
             LOGGER.warn("Push notification failed for subscription {}", savedSubscription.getSubscriptionId(), exception);
@@ -144,6 +155,13 @@ public class PushNotificationService {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
+    }
+
+    private String readResponseBody(HttpResponse response) throws IOException {
+        if (response.getEntity() == null) {
+            return "";
+        }
+        return EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
     }
 
     private void disableSubscription(WebPushSubscription subscription) {
