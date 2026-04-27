@@ -7,6 +7,7 @@ import com.example.volley_reservations.model.Reservation;
 import com.example.volley_reservations.repository.ReservationRepository;
 import com.example.volley_reservations.repository.UserRepository;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,6 +71,7 @@ public class ReservationService {
     }
 
 
+    @Scheduled(cron = "0 10 3 * * *")
     public void deleteOldReservations(){
         LocalDate today = LocalDate.now();
         reservationRepository.deleteAllBeforeToday(today);

@@ -39,7 +39,6 @@ public class FieldController {
             return "redirect:/home";
         }
 
-        reservationService.deleteOldReservations();
         populateModel(model, fieldNumber);
         if (fieldNumber == 1)
             return "field1";
