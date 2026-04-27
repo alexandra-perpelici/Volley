@@ -25,7 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/css/**", "/img/**", "/js/**", "/manifest.webmanifest", "/sw.js", "/api/push/public-key", "/registry/payments/**").permitAll()
                         .requestMatchers("/api/push/**").hasRole("ADMIN")
                         .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/home", "/field/**", "/cart/**", "/payments/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/home", "/field/**", "/cart/**", "/payments/**", "/profile").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -39,6 +39,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "ORDER BY r.reservation_date DESC, r.reservation_time ASC")
     List<Reservation> findAdminReservationsForUser(@Param("userId") Integer userId);
 
+    @EntityGraph(attributePaths = {"payment"})
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.user.user_id = :userId " +
+            "ORDER BY r.reservation_date DESC, r.reservation_time ASC")
+    List<Reservation> findReservationsForUser(@Param("userId") Integer userId);
+
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.user_id = :userId")
     long countReservationsForUser(@Param("userId") Integer userId);
 

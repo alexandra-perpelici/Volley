@@ -104,7 +104,10 @@ public class TemporaryCartController {
         List<TemporaryReservation> cart = tempResService.getUserReservations(user.getUser_id());
         model.addAttribute("cart", cart);
         model.addAttribute("totalPrice", cart.size() * 20);
+        model.addAttribute("selectedCount", cart.size());
+        model.addAttribute("selectedTotal", cart.size() * 20);
         model.addAttribute("activeBlacklist", blacklistService.findActiveForUser(user).orElse(null));
+        model.addAttribute("source", source);
 
 
         // Update session-based previousPage only as backup
@@ -122,6 +125,7 @@ public class TemporaryCartController {
                                  @RequestParam String reservationTime,
                                  @RequestParam int fieldNumber,
                                  @RequestParam(required = false) Integer originField,
+                                 @RequestParam(required = false) String source,
                                  Authentication authentication,
                                  RedirectAttributes redirectAttributes,
                                  HttpSession session) {
@@ -130,9 +134,13 @@ public class TemporaryCartController {
         tempResService.removeReservation(user.getUser_id(),
                 new TemporaryReservation(reservationDate, reservationTime, fieldNumber, null));
 
-        redirectAttributes.addAttribute("fieldNumber",fieldNumber);
+        if ("home".equals(source)) {
+            redirectAttributes.addAttribute("source", "home");
+            return "redirect:/cart/view";
+        }
 
         if (originField != null) {
+            redirectAttributes.addAttribute("fieldNumber", originField);
             return "redirect:/cart/view";
         }
 

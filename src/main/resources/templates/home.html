@@ -4,92 +4,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0f5258">
-    <title>Beach Court Reservations</title>
+    <title>Volley Dashboard</title>
     <link rel="manifest" th:href="@{/manifest.webmanifest}">
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link th:href="@{/css/site.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link th:href="@{/css/site.css(v='booking-ui-4')}" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="bg-light schedule-page dashboard-page">
 
-<main class="container py-4 app-shell home-shell">
-    <header class="app-topbar">
-        <div>
-            <p class="eyebrow">Beach volley booking</p>
-            <h1 class="mb-0">Welcome! Beach Court Reservations</h1>
-            <p class="lead-copy">Two sand courts, seven days of slots, and a cart built for quick checkout.</p>
-        </div>
-        <div class="topbar-actions">
-            <form th:action="@{/admin}" method="get" sec:authorize="hasRole('ADMIN')">
-                <button type="submit" class="btn btn-secondary">Admin</button>
-            </form>
-            <button type="button" class="btn btn-secondary" data-pwa-install hidden>Install App</button>
-            <button type="button" class="btn btn-secondary" data-push-subscribe sec:authorize="hasRole('ADMIN')" hidden>Enable Alerts</button>
-            <button type="button" class="btn btn-secondary" data-push-test sec:authorize="hasRole('ADMIN')" hidden>Test Alert</button>
-            <span class="push-status" data-push-status sec:authorize="hasRole('ADMIN')" aria-live="polite"></span>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-outline-danger" id="logoutButton">Logout</button>
-            </form>
-        </div>
-    </header>
-
-    <section class="home-dashboard" aria-label="Reservation overview">
-        <div class="intro-panel">
-            <div>
-                <p class="eyebrow">Open daily</p>
-                <h2 class="mb-3">Beach courts by the water</h2>
-                <p class="mb-0">Morning, afternoon, and evening reservations are available in fixed 90-minute slots.</p>
-            </div>
-            <div class="metric-row" aria-label="Booking details">
-                <div class="metric">
-                    <strong>2</strong>
-                    <span>courts</span>
-                </div>
-                <div class="metric">
-                    <strong>20</strong>
-                    <span>lei per slot</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="court-grid" aria-label="Choose a court">
-            <article class="court-card">
-                <div>
-                    <p class="eyebrow">Court 1</p>
-                    <h2>Seaside Court</h2>
-                    <p>Closest to the shoreline with a clear weekly schedule.</p>
-                </div>
-                <form th:action="@{/field/1}" method="get" data-loading-form>
-                    <button type="submit" class="btn btn-primary btn-lg" id="field1Button">
-                        <span class="btn-label">View Court 1</span>
-                        <span class="btn-spinner" aria-hidden="true"></span>
-                    </button>
-                </form>
-            </article>
-
-            <article class="court-card">
-                <div>
-                    <p class="eyebrow">Court 2</p>
-                    <h2>Palm Court</h2>
-                    <p>A second sand court with the same daily time windows.</p>
-                </div>
-                <form th:action="@{/field/2}" method="get" data-loading-form>
-                    <button type="submit" class="btn btn-primary btn-lg" id="field2Button">
-                        <span class="btn-label">View Court 2</span>
-                        <span class="btn-spinner" aria-hidden="true"></span>
-                    </button>
-                </form>
-            </article>
-        </div>
-    </section>
-
-    <div class="action-bar">
-        <form th:action="@{/cart/view}" method="get" class="quick-link">
-            <input type="hidden" name="source" value="home" />
-            <button type="submit" class="btn btn-success btn-lg">Go to Cart</button>
+<div class="booking-layout">
+    <aside class="booking-sidebar" aria-label="Main navigation">
+        <a class="brand-lockup" th:href="@{/home}">
+            <span class="brand-mark">VB</span>
+            <span>VolleyBook</span>
+        </a>
+        <nav class="booking-nav">
+            <a th:href="@{/home}" class="active"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
+            <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Court 1</span></a>
+            <a th:href="@{/field/2}"><i class="bi bi-calendar2-week"></i><span>Court 2</span></a>
+            <a th:href="@{/cart/view(source='home')}"><i class="bi bi-bag-check"></i><span>Cart</span></a>
+            <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"><i class="bi bi-speedometer2"></i><span>Admin</span></a>
+        </nav>
+        <form th:action="@{/logout}" method="post" class="sidebar-logout">
+            <button type="submit"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button>
         </form>
-    </div>
-</main>
+    </aside>
+
+    <main class="booking-main">
+        <header class="court-header dashboard-header">
+            <div>
+                <div class="mobile-back-row">
+                    <span>VolleyBook</span>
+                    <span>Dashboard</span>
+                </div>
+                <p class="eyebrow">Beach volley booking</p>
+                <h1>Dashboard</h1>
+                <div class="court-meta" aria-label="Booking details">
+                    <span>2 courts</span>
+                    <span>7 day schedule</span>
+                    <span>20 lei / slot</span>
+                    <span>Admin alerts ready</span>
+                </div>
+            </div>
+            <div class="court-header-actions">
+                <button type="button" class="btn btn-secondary" data-pwa-install hidden>Install App</button>
+                <button type="button" class="btn btn-secondary" data-push-subscribe sec:authorize="hasRole('ADMIN')" hidden>Enable Alerts</button>
+                <button type="button" class="btn btn-secondary" data-push-test sec:authorize="hasRole('ADMIN')" hidden>Test Alert</button>
+                <span class="push-status" data-push-status sec:authorize="hasRole('ADMIN')" aria-live="polite"></span>
+                <form th:action="@{/admin}" method="get" sec:authorize="hasRole('ADMIN')">
+                    <button type="submit" class="btn btn-secondary">Admin</button>
+                </form>
+            </div>
+        </header>
+
+        <div th:if="${activeBlacklist}" class="alert alert-warning">
+            This account is blacklisted from reservations until
+            <strong th:text="${#temporals.format(activeBlacklist.endsAt, 'dd MMM yyyy HH:mm')}"></strong>.
+        </div>
+
+        <nav class="booking-progress" aria-label="Booking progress">
+            <span class="progress-step active">
+                <span class="step-badge">1</span>
+                <span>Choose Court</span>
+            </span>
+            <span class="step-line"></span>
+            <span class="progress-step">
+                <span class="step-badge">2</span>
+                <span>Choose Time</span>
+            </span>
+            <span class="step-line"></span>
+            <span class="progress-step">
+                <span class="step-badge">3</span>
+                <span>Confirm</span>
+            </span>
+        </nav>
+
+        <section class="dashboard-workspace">
+            <div class="dashboard-content">
+                <section class="dashboard-panel dashboard-hero-panel">
+                    <div>
+                        <p class="eyebrow">Open daily</p>
+                        <h2>Book a beach court without leaving the dashboard</h2>
+                        <p>Choose a court, pick available slots, and your selected times stay visible in the cart panel.</p>
+                    </div>
+                    <div class="metric-row" aria-label="Booking summary">
+                        <div class="metric">
+                            <strong>2</strong>
+                            <span>courts</span>
+                        </div>
+                        <div class="metric">
+                            <strong th:text="${selectedCount}">0</strong>
+                            <span>selected slots</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="dashboard-courts" aria-label="Choose a court">
+                    <article class="dashboard-court-card">
+                        <div>
+                            <p class="eyebrow">Court 1</p>
+                            <h2>Seaside Court</h2>
+                            <p>Fast access to today's schedule and weekly availability.</p>
+                        </div>
+                        <form th:action="@{/field/1}" method="get" data-loading-form>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <span class="btn-label">View Court 1</span>
+                                <span class="btn-spinner" aria-hidden="true"></span>
+                            </button>
+                        </form>
+                    </article>
+
+                    <article class="dashboard-court-card">
+                        <div>
+                            <p class="eyebrow">Court 2</p>
+                            <h2>Palm Court</h2>
+                            <p>A second court with the same simple slot-based booking flow.</p>
+                        </div>
+                        <form th:action="@{/field/2}" method="get" data-loading-form>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <span class="btn-label">View Court 2</span>
+                                <span class="btn-spinner" aria-hidden="true"></span>
+                            </button>
+                        </form>
+                    </article>
+                </section>
+            </div>
+
+            <aside class="cart-rail dashboard-cart-rail" aria-label="Current cart">
+                <div class="cart-rail-header">
+                    <div>
+                        <p class="eyebrow">Cart</p>
+                        <h2>Selected</h2>
+                    </div>
+                    <strong th:text="${selectedCount} + ' items'">0 items</strong>
+                </div>
+
+                <div th:if="${cart.isEmpty()}" class="empty-cart-note">
+                    Select a slot from Court 1 or Court 2 to start checkout.
+                </div>
+
+                <div th:if="${!cart.isEmpty()}" class="cart-line-list">
+                    <div class="cart-line" th:each="res : ${cart}">
+                        <div>
+                            <strong th:text="${res.time}">08:00 - 09:30</strong>
+                            <span th:text="${#temporals.format(res.date, 'dd MMM yyyy') + ' - Court ' + res.fieldNumber}">20 May - Court 1</span>
+                        </div>
+                        <span>20 lei</span>
+                    </div>
+                </div>
+
+                <div class="cart-rail-total">
+                    <span>Total</span>
+                    <strong th:text="${selectedTotal} + ' lei'">0 lei</strong>
+                </div>
+
+                <form th:action="@{/cart/view}" method="get">
+                    <input type="hidden" name="source" value="home">
+                    <button type="submit" class="btn btn-success btn-lg w-100" th:disabled="${cart.isEmpty()}">Checkout</button>
+                </form>
+            </aside>
+        </section>
+    </main>
+</div>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <a th:href="@{/home}" class="active"><i class="bi bi-grid-1x2-fill"></i><span>Home</span></a>
+    <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Courts</span></a>
+    <a th:href="@{/cart/view(source='home')}"><i class="bi bi-bag-check"></i><span>Cart</span></a>
+    <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a>
+</nav>
 
 <script>
     document.querySelectorAll("[data-loading-form]").forEach(form => {

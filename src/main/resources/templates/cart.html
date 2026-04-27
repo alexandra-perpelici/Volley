@@ -1,96 +1,189 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Your Cart</title>
+    <meta name="theme-color" content="#0f5258">
+    <title>Volley Cart</title>
+    <link rel="manifest" th:href="@{/manifest.webmanifest}">
+    <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link th:href="@{/css/site.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link th:href="@{/css/site.css(v='booking-ui-4')}" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="bg-light schedule-page checkout-page">
 
-<main class="container py-4 app-shell cart-shell">
-    <header class="app-topbar">
-        <div>
-            <p class="eyebrow">Checkout</p>
-            <h1 class="mb-0">Beach Court Cart</h1>
-            <p class="lead-copy">Review reserved slots before generating the registry payment URL.</p>
-        </div>
-    </header>
+<div class="booking-layout">
+    <aside class="booking-sidebar" aria-label="Main navigation">
+        <a class="brand-lockup" th:href="@{/home}">
+            <span class="brand-mark">VB</span>
+            <span>VolleyBook</span>
+        </a>
+        <nav class="booking-nav">
+            <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
+            <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Court 1</span></a>
+            <a th:href="@{/field/2}"><i class="bi bi-calendar2-week"></i><span>Court 2</span></a>
+            <a th:href="@{/cart/view(fieldNumber=${fieldNumber}, source=${source})}" class="active"><i class="bi bi-bag-check"></i><span>Cart</span></a>
+            <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"><i class="bi bi-speedometer2"></i><span>Admin</span></a>
+        </nav>
+        <form th:action="@{/logout}" method="post" class="sidebar-logout">
+            <button type="submit"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button>
+        </form>
+    </aside>
 
-    <div th:if="${message}" class="alert alert-danger">
-        <p th:text="${message}"></p>
-    </div>
+    <main class="booking-main">
+        <header class="court-header checkout-header">
+            <div>
+                <div class="mobile-back-row">
+                    <a th:href="@{/home}" aria-label="Back to dashboard">&larr;</a>
+                    <span>VolleyBook</span>
+                </div>
+                <p class="eyebrow">Cart</p>
+                <h1>Review selected slots</h1>
+                <div class="court-meta" aria-label="Cart details">
+                    <span th:text="${selectedCount + ' selected'}">0 selected</span>
+                    <span th:text="${selectedTotal + ' lei total'}">0 lei total</span>
+                    <span>Registry payment</span>
+                </div>
+            </div>
+            <div class="court-header-actions">
+                <form th:action="@{/home}" method="get">
+                    <button type="submit" class="btn btn-secondary">Dashboard</button>
+                </form>
+                <form th:action="@{/field/1}" method="get">
+                    <button type="submit" class="btn btn-secondary">Court 1</button>
+                </form>
+                <form th:action="@{/field/2}" method="get">
+                    <button type="submit" class="btn btn-secondary">Court 2</button>
+                </form>
+            </div>
+        </header>
 
-    <div th:if="${activeBlacklist}" class="alert alert-warning">
-        This account is blacklisted from reservations until
-        <strong th:text="${#temporals.format(activeBlacklist.endsAt, 'dd MMM yyyy HH:mm')}"></strong>.
-    </div>
-
-    <div th:if="${cart.isEmpty()}" class="alert alert-info">
-        Your cart is empty.
-    </div>
-
-    <div th:if="${!cart.isEmpty()}" class="table-responsive card-table-wrap">
-        <table class="table table-bordered table-hover text-center align-middle stack-table">
-            <thead class="table-dark">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Date</th>
-                <th scope="col">Time</th>
-                <th scope="col">Court</th>
-                <th scope="col">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="res, iterStat : ${cart}">
-                <td data-label="#" th:text="${iterStat.index + 1}"></td>
-                <td data-label="Date" th:text="${res.date}"></td>
-                <td data-label="Time" th:text="${res.time}"></td>
-                <td data-label="Court" th:text="${res.fieldNumber}"></td>
-                <td data-label="Action">
-                    <form th:action="@{/cart/delete}" method="post" class="d-inline">
-                        <input type="hidden" name="reservationDate" th:value="${res.date}" />
-                        <input type="hidden" name="reservationTime" th:value="${res.time}" />
-                        <input type="hidden" name="fieldNumber" th:value="${res.fieldNumber}" />
-                        <input type="hidden" name="originField" th:value="${fieldNumber}" />
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <form th:if="${!cart.isEmpty()}" th:action="@{/cart/confirm}" method="post" class="checkout-panel">
-        <input type="hidden" name="fieldNumber" th:value="${fieldNumber}" />
-
-        <div class="checkout-total mb-4">
-            <p class="eyebrow">Total</p>
-            <h4>Total Price: <span th:text="${totalPrice}">0</span> lei</h4>
+        <div th:if="${message}" class="alert alert-danger">
+            <p th:text="${message}"></p>
         </div>
 
-        <fieldset class="payment-panel mb-3">
-            <legend class="h5">Payment Method</legend>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" id="cardPayment" value="CARD" required>
-                <label class="form-check-label" for="cardPayment">Card at registry</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" id="cashPayment" value="CASH_AT_REGISTRY">
-                <label class="form-check-label" for="cashPayment">Cash at registry</label>
-            </div>
-        </fieldset>
+        <div th:if="${activeBlacklist}" class="alert alert-warning">
+            This account is blacklisted from reservations until
+            <strong th:text="${#temporals.format(activeBlacklist.endsAt, 'dd MMM yyyy HH:mm')}"></strong>.
+        </div>
 
-        <button type="submit" class="btn btn-success btn-lg">Generate Payment URL</button>
-    </form>
+        <nav class="booking-progress" aria-label="Booking progress">
+            <span class="progress-step done">
+                <span class="step-badge">1</span>
+                <span>Choose Court</span>
+            </span>
+            <span class="step-line"></span>
+            <span class="progress-step done">
+                <span class="step-badge">2</span>
+                <span>Choose Time</span>
+            </span>
+            <span class="step-line"></span>
+            <span class="progress-step active">
+                <span class="step-badge">3</span>
+                <span>Confirm</span>
+            </span>
+        </nav>
 
-    <form th:action="@{/cart/back}" method="post" class="mb-0">
-        <input type="hidden" name="fieldNumber" th:value="${fieldNumber}" />
-        <input type="hidden" name="source" th:value="${fieldNumber == null} ? 'home' : ''" />
-        <button type="submit" class="btn btn-secondary btn-lg">Go Back</button>
-    </form>
-</main>
+        <section class="checkout-workspace">
+            <div class="checkout-list-panel">
+                <div class="checkout-list-header">
+                    <div>
+                        <p class="eyebrow">Selected times</p>
+                        <h2>Your cart</h2>
+                    </div>
+                    <strong th:text="${selectedCount + ' slots'}">0 slots</strong>
+                </div>
+
+                <div th:if="${cart.isEmpty()}" class="checkout-empty-state">
+                    <h3>No selected slots yet</h3>
+                    <p>Choose a court and add available time slots. They will stay visible here and on the dashboard.</p>
+                    <div class="checkout-empty-actions">
+                        <form th:action="@{/field/1}" method="get">
+                            <button type="submit" class="btn btn-primary">Court 1</button>
+                        </form>
+                        <form th:action="@{/field/2}" method="get">
+                            <button type="submit" class="btn btn-primary">Court 2</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div th:if="${!cart.isEmpty()}" class="checkout-item-list">
+                    <article class="checkout-item" th:each="res, iterStat : ${cart}">
+                        <span class="checkout-item-index" th:text="${iterStat.index + 1}">1</span>
+                        <div class="checkout-item-body">
+                            <strong th:text="${res.time}">08:00 - 09:30</strong>
+                            <span th:text="${#temporals.format(res.date, 'dd MMM yyyy')}">20 May 2026</span>
+                        </div>
+                        <div class="checkout-item-meta">
+                            <strong th:text="${'Court ' + res.fieldNumber}">Court 1</strong>
+                            <span>20 lei</span>
+                        </div>
+                        <form th:action="@{/cart/delete}" method="post" class="checkout-item-action">
+                            <input type="hidden" name="reservationDate" th:value="${res.date}">
+                            <input type="hidden" name="reservationTime" th:value="${res.time}">
+                            <input type="hidden" name="fieldNumber" th:value="${res.fieldNumber}">
+                            <input type="hidden" name="originField" th:if="${fieldNumber != null}" th:value="${fieldNumber}">
+                            <input type="hidden" name="source" th:if="${source != null}" th:value="${source}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                        </form>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="checkout-summary-panel" aria-label="Checkout summary">
+                <div>
+                    <p class="eyebrow">Checkout</p>
+                    <h2>Payment</h2>
+                    <p>Confirm the selected slots and generate the registry payment link.</p>
+                </div>
+
+                <div class="checkout-total-line">
+                    <span>Total</span>
+                    <strong th:text="${totalPrice} + ' lei'">0 lei</strong>
+                </div>
+
+                <form th:if="${!cart.isEmpty()}" th:action="@{/cart/confirm}" method="post" class="checkout-payment-form">
+                    <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
+
+                    <fieldset class="payment-choice-group">
+                        <legend>Payment method</legend>
+                        <label class="payment-choice" for="cardPayment">
+                            <input type="radio" name="paymentMethod" id="cardPayment" value="CARD" required checked>
+                            <span>
+                                <strong>Card at registry</strong>
+                                <small>Pay by card when you arrive.</small>
+                            </span>
+                        </label>
+                        <label class="payment-choice" for="cashPayment">
+                            <input type="radio" name="paymentMethod" id="cashPayment" value="CASH_AT_REGISTRY">
+                            <span>
+                                <strong>Cash at registry</strong>
+                                <small>Pay in cash before entering the court.</small>
+                            </span>
+                        </label>
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100">Generate Payment URL</button>
+                </form>
+
+                <form th:action="@{/cart/back}" method="post">
+                    <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
+                    <input type="hidden" name="source" th:value="${source == null ? '' : source}">
+                    <button type="submit" class="btn btn-secondary btn-lg w-100">Keep booking</button>
+                </form>
+            </aside>
+        </section>
+    </main>
+</div>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Home</span></a>
+    <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Courts</span></a>
+    <a th:href="@{/cart/view(fieldNumber=${fieldNumber}, source=${source})}" class="active"><i class="bi bi-bag-check-fill"></i><span>Cart</span></a>
+    <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a>
+</nav>
 
 </body>
 </html>

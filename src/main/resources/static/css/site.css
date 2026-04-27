@@ -767,6 +767,269 @@ legend {
     align-items: start;
 }
 
+.dashboard-workspace,
+.checkout-workspace {
+    display: grid;
+    gap: 18px;
+    align-items: start;
+}
+
+.dashboard-workspace {
+    grid-template-columns: minmax(0, 1fr) 310px;
+}
+
+.checkout-workspace {
+    grid-template-columns: minmax(0, 1fr) 340px;
+}
+
+.dashboard-content {
+    display: grid;
+    gap: 18px;
+    min-width: 0;
+}
+
+.dashboard-panel,
+.dashboard-court-card,
+.checkout-list-panel,
+.checkout-summary-panel {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-soft);
+}
+
+.dashboard-hero-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 18px;
+    align-items: end;
+    padding: 24px;
+    color: #fff;
+    background:
+        linear-gradient(135deg, rgba(7, 93, 97, 0.94), rgba(15, 82, 88, 0.82)),
+        url("/img/beach-volleyball-bg.png") center 58% / cover;
+}
+
+.dashboard-hero-panel h2,
+.dashboard-hero-panel p,
+.dashboard-hero-panel .eyebrow {
+    color: #fff;
+}
+
+.dashboard-hero-panel p {
+    max-width: 620px;
+    margin-bottom: 0;
+}
+
+.dashboard-courts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.dashboard-court-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 260px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.dashboard-court-card::before {
+    content: "";
+    display: block;
+    height: 100px;
+    margin: -20px -20px 18px;
+    background:
+        linear-gradient(180deg, rgba(18, 50, 56, 0.08), rgba(18, 50, 56, 0.32)),
+        url("/img/beach-volleyball-bg.png") center 60% / cover;
+}
+
+.dashboard-court-card h2 {
+    margin-bottom: 10px;
+}
+
+.dashboard-court-card p {
+    margin-bottom: 18px;
+}
+
+.dashboard-court-card form {
+    margin-top: auto;
+}
+
+.dashboard-court-card .btn {
+    width: 100%;
+}
+
+.checkout-list-panel,
+.checkout-summary-panel {
+    padding: 20px;
+}
+
+.checkout-list-header,
+.checkout-total-line,
+.checkout-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.checkout-list-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+.checkout-list-header h2,
+.checkout-summary-panel h2 {
+    margin: 0;
+}
+
+.checkout-list-header > strong,
+.checkout-total-line strong {
+    color: var(--teal-dark);
+}
+
+.checkout-empty-state {
+    display: grid;
+    gap: 10px;
+    min-height: 230px;
+    place-content: center;
+    padding: 24px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 8px;
+    background: rgba(223, 243, 234, 0.3);
+    text-align: center;
+}
+
+.checkout-empty-state h3,
+.checkout-empty-state p {
+    margin: 0;
+}
+
+.checkout-empty-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.checkout-item-list {
+    display: grid;
+    gap: 12px;
+}
+
+.checkout-item {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(247, 250, 249, 0.92);
+}
+
+.checkout-item-index {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--teal-dark);
+    font-weight: 900;
+}
+
+.checkout-item-body,
+.checkout-item-meta {
+    display: grid;
+    gap: 4px;
+}
+
+.checkout-item-body strong,
+.checkout-item-meta strong {
+    color: var(--ink);
+}
+
+.checkout-item-body span,
+.checkout-item-meta span,
+.checkout-summary-panel p,
+.payment-choice small {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.checkout-item-meta {
+    min-width: 94px;
+    text-align: right;
+}
+
+.checkout-item-action {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2px;
+}
+
+.checkout-summary-panel {
+    position: sticky;
+    top: 18px;
+    display: grid;
+    gap: 16px;
+}
+
+.checkout-total-line {
+    align-items: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+.checkout-payment-form,
+.payment-choice-group {
+    display: grid;
+    gap: 12px;
+}
+
+.payment-choice-group {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.payment-choice-group legend {
+    margin-bottom: 2px;
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.payment-choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+    cursor: pointer;
+}
+
+.payment-choice input {
+    margin-top: 4px;
+}
+
+.payment-choice span,
+.payment-choice strong,
+.payment-choice small {
+    display: block;
+}
+
 .schedule-card-ui {
     min-width: 0;
     border: 1px solid var(--line);
@@ -989,13 +1252,20 @@ legend {
 }
 
 @media (max-width: 1180px) {
-    .booking-workspace {
+    .booking-workspace,
+    .dashboard-workspace,
+    .checkout-workspace {
         grid-template-columns: 1fr;
     }
 
-    .cart-rail {
+    .cart-rail,
+    .checkout-summary-panel {
         position: static;
         min-height: 0;
+    }
+
+    .dashboard-hero-panel {
+        grid-template-columns: 1fr;
     }
 
     .slot-card-grid {
@@ -1464,6 +1734,66 @@ legend {
         display: block;
     }
 
+    .dashboard-workspace,
+    .checkout-workspace {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 0 12px 92px;
+    }
+
+    .dashboard-content {
+        gap: 12px;
+    }
+
+    .dashboard-hero-panel,
+    .checkout-list-panel,
+    .checkout-summary-panel {
+        padding: 16px;
+    }
+
+    .dashboard-hero-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero-panel h2 {
+        font-size: 1.28rem;
+    }
+
+    .dashboard-courts {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .dashboard-court-card {
+        min-height: 230px;
+        padding: 16px;
+    }
+
+    .dashboard-court-card::before {
+        height: 84px;
+        margin: -16px -16px 14px;
+    }
+
+    .checkout-list-header {
+        align-items: flex-start;
+    }
+
+    .checkout-item {
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .checkout-item-meta,
+    .checkout-item-action {
+        grid-column: 2;
+        text-align: left;
+    }
+
+    .checkout-item-action {
+        justify-content: flex-start;
+    }
+
     .schedule-card-ui {
         border: 0;
         border-radius: 0;
@@ -1749,5 +2079,951 @@ legend {
 
     .modal-actions {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Shared booking UI refinements */
+.schedule-page {
+    background:
+        linear-gradient(180deg, rgba(238, 246, 242, 0.9), rgba(251, 248, 240, 0.96)),
+        url("/img/beach-volleyball-bg.png") center / cover fixed;
+}
+
+.booking-layout {
+    grid-template-columns: 204px minmax(0, 1fr);
+    width: min(100% - 28px, 1480px);
+    min-height: calc(100vh - 28px);
+    margin: 14px auto;
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.booking-sidebar {
+    padding: 26px 16px 22px;
+    background: linear-gradient(180deg, #075f63 0%, #075257 45%, #063b3f 100%);
+}
+
+.brand-lockup {
+    margin-bottom: 28px;
+    padding-inline: 10px;
+}
+
+.brand-mark {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.booking-nav {
+    gap: 10px;
+}
+
+.booking-nav a,
+.sidebar-logout button {
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.booking-nav a:hover,
+.booking-nav a:focus,
+.booking-nav a.active {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.booking-main {
+    padding: 30px;
+}
+
+.court-header {
+    min-height: 128px;
+}
+
+.court-header h1 {
+    font-size: clamp(1.95rem, 2.8vw, 2.45rem);
+}
+
+.court-meta span {
+    color: #10383d;
+    background: #f8fbfa;
+    box-shadow: 0 1px 0 rgba(18, 50, 56, 0.04);
+}
+
+.court-header-actions .btn {
+    min-width: 106px;
+}
+
+.btn-primary,
+.btn-success {
+    border-color: #0e6268;
+    background: #0e6268;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-success:hover,
+.btn-success:focus {
+    border-color: #084d52;
+    background: #084d52;
+}
+
+.btn-secondary {
+    border-color: #45644c;
+    background: #45644c;
+}
+
+.dashboard-workspace {
+    grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+.checkout-workspace {
+    grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.dashboard-panel,
+.dashboard-court-card,
+.cart-rail,
+.checkout-list-panel,
+.checkout-summary-panel {
+    border-color: rgba(18, 50, 56, 0.12);
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.dashboard-hero-panel {
+    min-height: 194px;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    align-items: center;
+    background:
+        linear-gradient(135deg, rgba(7, 91, 96, 0.96), rgba(15, 82, 88, 0.8)),
+        url("/img/beach-volleyball-bg.png") center 58% / cover;
+}
+
+.dashboard-hero-panel h2 {
+    max-width: 600px;
+    margin-bottom: 10px;
+    font-size: clamp(1.55rem, 2.1vw, 2rem);
+}
+
+.dashboard-hero-panel .metric-row {
+    margin: 0;
+}
+
+.metric {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(4px);
+}
+
+.dashboard-courts {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+}
+
+.dashboard-court-card {
+    min-height: 270px;
+}
+
+.dashboard-court-card::before {
+    background:
+        linear-gradient(180deg, rgba(18, 50, 56, 0.02), rgba(18, 50, 56, 0.18)),
+        url("/img/beach-volleyball-bg.png") center 58% / cover;
+}
+
+.cart-rail {
+    padding: 20px;
+}
+
+.dashboard-cart-rail {
+    min-height: 0;
+}
+
+.cart-line-list {
+    max-height: 330px;
+}
+
+.cart-line {
+    background: #f8fbfa;
+}
+
+.cart-rail .btn:disabled,
+.mobile-cart-bar button:disabled {
+    opacity: 0.58;
+}
+
+.checkout-list-panel {
+    min-height: 360px;
+}
+
+.checkout-summary-panel {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 250, 0.94));
+}
+
+.checkout-empty-state {
+    min-height: 230px;
+    background: #f3faf7;
+}
+
+.checkout-total-line strong {
+    font-size: 1.2rem;
+}
+
+.payment-choice {
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+}
+
+.payment-choice:hover,
+.payment-choice:focus-within {
+    border-color: rgba(14, 98, 104, 0.42);
+    background: #f8fbfa;
+    box-shadow: 0 8px 20px rgba(15, 52, 58, 0.08);
+}
+
+@media (max-width: 1180px) {
+    .dashboard-workspace,
+    .checkout-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-summary-panel {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    body.bg-light.schedule-page {
+        background: #f6faf8;
+    }
+
+    .booking-layout {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .booking-main {
+        padding: 0 0 18px;
+    }
+
+    .court-header {
+        min-height: 0;
+        padding: 20px 16px;
+    }
+
+    .court-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .court-meta {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        max-width: 100%;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+    }
+
+    .court-meta::-webkit-scrollbar {
+        display: none;
+    }
+
+    .court-meta span {
+        flex: 0 0 auto;
+    }
+
+    .dashboard-workspace,
+    .checkout-workspace {
+        gap: 12px;
+        padding: 14px 12px 24px;
+    }
+
+    .dashboard-hero-panel {
+        min-height: 0;
+        padding: 18px;
+    }
+
+    .dashboard-hero-panel h2 {
+        font-size: 1.28rem;
+    }
+
+    .dashboard-hero-panel .metric-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 16px;
+    }
+
+    .metric {
+        min-height: 68px;
+        padding: 12px;
+    }
+
+    .dashboard-courts {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-court-card {
+        min-height: 0;
+        padding: 16px;
+    }
+
+    .dashboard-court-card::before {
+        height: 84px;
+        margin: -16px -16px 14px;
+    }
+
+    .dashboard-page .dashboard-cart-rail {
+        display: flex;
+        position: static;
+        min-height: 0;
+    }
+
+    body:not(.court-page) .mobile-cart-bar {
+        display: none !important;
+    }
+
+    .court-page .cart-rail {
+        display: none;
+    }
+
+    .court-page .day-panels {
+        padding-bottom: 104px;
+    }
+
+    .checkout-list-panel,
+    .checkout-summary-panel,
+    .cart-rail {
+        padding: 16px;
+    }
+
+    .checkout-empty-state {
+        min-height: 210px;
+        padding: 20px;
+    }
+
+    .checkout-item {
+        grid-template-columns: 34px minmax(0, 1fr);
+    }
+
+    .checkout-item-meta,
+    .checkout-item-action {
+        grid-column: 2;
+        text-align: left;
+    }
+
+    .checkout-item-action {
+        justify-content: flex-start;
+    }
+
+    .mobile-cart-bar {
+        min-height: 70px;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    }
+}
+
+/* Booking UI v3 */
+.booking-layout {
+    border-radius: 12px;
+    box-shadow: 0 22px 70px rgba(10, 44, 49, 0.14);
+}
+
+.booking-sidebar {
+    width: 100%;
+}
+
+.brand-lockup {
+    gap: 12px;
+}
+
+.brand-mark {
+    font-size: 0.7rem;
+    font-weight: 900;
+}
+
+.booking-nav a,
+.sidebar-logout button {
+    gap: 12px;
+}
+
+.booking-nav a i,
+.sidebar-logout button i {
+    width: 22px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.08rem;
+    text-align: center;
+}
+
+.booking-nav a span,
+.sidebar-logout button span {
+    min-width: 0;
+}
+
+.dashboard-page .court-header,
+.checkout-page .court-header {
+    min-height: 0;
+    padding-bottom: 18px;
+}
+
+.dashboard-page .court-header h1,
+.checkout-page .court-header h1 {
+    font-size: clamp(2.1rem, 3vw, 2.75rem);
+}
+
+.booking-progress {
+    display: grid;
+    grid-template-columns: auto minmax(42px, 92px) auto minmax(42px, 92px) auto;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: -2px;
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.progress-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.step-badge {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(18, 50, 56, 0.26);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.step-line {
+    height: 1px;
+    margin: 0 14px;
+    background: rgba(18, 50, 56, 0.2);
+}
+
+.progress-step.active {
+    color: var(--ink);
+}
+
+.progress-step.active .step-badge,
+.progress-step.done .step-badge {
+    border-color: #0e6268;
+    color: #fff;
+    background: #0e6268;
+}
+
+.progress-step.done {
+    color: #0e6268;
+}
+
+.dashboard-page .dashboard-workspace,
+.checkout-page .checkout-workspace {
+    display: grid !important;
+    gap: 22px;
+    margin-top: 4px;
+}
+
+.dashboard-page .dashboard-workspace {
+    grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.checkout-page .checkout-workspace {
+    grid-template-columns: minmax(0, 1fr) 390px;
+}
+
+.dashboard-page .dashboard-hero-panel {
+    min-height: 0;
+    padding: 26px;
+    border: 1px solid rgba(18, 50, 56, 0.12);
+    color: var(--ink);
+    background: #fff;
+}
+
+.dashboard-page .dashboard-hero-panel h2,
+.dashboard-page .dashboard-hero-panel p,
+.dashboard-page .dashboard-hero-panel .eyebrow {
+    color: var(--ink);
+}
+
+.dashboard-page .dashboard-hero-panel .eyebrow,
+.checkout-page .eyebrow {
+    color: var(--clay);
+}
+
+.dashboard-page .dashboard-hero-panel p {
+    color: var(--muted);
+}
+
+.dashboard-page .dashboard-hero-panel .metric {
+    border-color: rgba(14, 98, 104, 0.16);
+    background: #f3faf7;
+}
+
+.dashboard-page .dashboard-hero-panel .metric strong {
+    color: #0e6268;
+}
+
+.dashboard-page .dashboard-hero-panel .metric span {
+    color: var(--muted);
+}
+
+.dashboard-court-card,
+.dashboard-cart-rail,
+.checkout-list-panel,
+.checkout-summary-panel {
+    border: 1px solid rgba(18, 50, 56, 0.12);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 18px 46px rgba(15, 52, 58, 0.08);
+}
+
+.dashboard-court-card {
+    min-height: 282px;
+}
+
+.dashboard-court-card::before {
+    height: 112px;
+}
+
+.dashboard-court-card .btn,
+.checkout-empty-actions .btn {
+    min-height: 52px;
+}
+
+.dashboard-cart-rail {
+    min-height: 0;
+}
+
+.dashboard-cart-rail .empty-cart-note,
+.checkout-empty-state {
+    border-color: rgba(14, 98, 104, 0.2);
+    background: #f5fbf8;
+}
+
+.checkout-list-panel,
+.checkout-summary-panel {
+    padding: 24px;
+}
+
+.checkout-list-panel {
+    min-height: 380px;
+}
+
+.checkout-summary-panel {
+    align-self: start;
+}
+
+.checkout-empty-state {
+    min-height: 260px;
+}
+
+.checkout-empty-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.checkout-summary-panel .btn {
+    min-height: 54px;
+}
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 1180px) {
+    .dashboard-page .dashboard-workspace,
+    .checkout-page .checkout-workspace {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-page .booking-main,
+    .checkout-page .booking-main {
+        padding-bottom: 92px;
+    }
+
+    .dashboard-page .court-header,
+    .checkout-page .court-header {
+        padding: 22px 16px 18px;
+        border-radius: 0 0 18px 18px;
+    }
+
+    .dashboard-page .court-header h1,
+    .checkout-page .court-header h1 {
+        font-size: 1.72rem;
+    }
+
+    .booking-progress {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: auto;
+        padding: 12px 16px 0;
+    }
+
+    .progress-step {
+        justify-content: center;
+        gap: 6px;
+        font-size: 0.74rem;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .step-line {
+        display: none;
+    }
+
+    .step-badge {
+        width: 26px;
+        height: 26px;
+        flex: 0 0 auto;
+    }
+
+    .dashboard-page .dashboard-workspace,
+    .checkout-page .checkout-workspace {
+        padding: 14px 12px 0;
+    }
+
+    .dashboard-page .dashboard-hero-panel,
+    .checkout-list-panel,
+    .checkout-summary-panel,
+    .dashboard-cart-rail {
+        border-radius: 12px;
+    }
+
+    .dashboard-page .dashboard-hero-panel {
+        padding: 18px;
+    }
+
+    .dashboard-page .dashboard-hero-panel .metric-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-court-card {
+        min-height: 0;
+    }
+
+    .dashboard-cart-rail {
+        display: flex !important;
+    }
+
+    .checkout-list-panel,
+    .checkout-summary-panel {
+        padding: 18px;
+    }
+
+    .checkout-empty-state {
+        min-height: 230px;
+    }
+
+    .checkout-empty-actions {
+        justify-content: center;
+    }
+
+    .mobile-bottom-nav {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+        z-index: 1040;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        min-height: 66px;
+        padding: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.68);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 -10px 34px rgba(15, 52, 58, 0.2);
+        backdrop-filter: blur(14px);
+    }
+
+    .mobile-bottom-nav a {
+        display: grid;
+        place-items: center;
+        gap: 3px;
+        border-radius: 14px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 900;
+        text-decoration: none;
+    }
+
+    .mobile-bottom-nav i {
+        font-size: 1.2rem;
+        line-height: 1;
+    }
+
+    .mobile-bottom-nav a.active {
+        color: #0e6268;
+        background: #e6f5ef;
+    }
+
+    .dashboard-page .mobile-cart-bar,
+    .checkout-page .mobile-cart-bar {
+        display: none !important;
+    }
+}
+
+/* Booking UI v4: profile and court mobile nav */
+.profile-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 22px;
+    align-items: start;
+}
+
+.profile-panel {
+    border: 1px solid rgba(18, 50, 56, 0.12);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 18px 46px rgba(15, 52, 58, 0.08);
+}
+
+.profile-summary-panel {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr) 330px;
+    gap: 18px;
+    align-items: center;
+    grid-column: 1 / -1;
+    padding: 24px;
+}
+
+.profile-avatar {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+    color: #0e6268;
+    background: #e6f5ef;
+    font-size: 1.85rem;
+}
+
+.profile-summary-panel h2,
+.profile-summary-panel p {
+    margin-bottom: 0;
+}
+
+.profile-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.profile-stat {
+    min-height: 74px;
+    padding: 12px;
+    border: 1px solid rgba(14, 98, 104, 0.16);
+    border-radius: 10px;
+    background: #f3faf7;
+}
+
+.profile-stat strong,
+.profile-stat span {
+    display: block;
+}
+
+.profile-stat strong {
+    color: #0e6268;
+    font-size: 1.35rem;
+}
+
+.profile-stat span {
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.reservations-panel,
+.profile-side-panel {
+    padding: 24px;
+}
+
+.profile-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+}
+
+.profile-section-header h2,
+.profile-side-panel h2 {
+    margin-bottom: 0;
+}
+
+.profile-empty-state {
+    display: grid;
+    gap: 10px;
+    min-height: 260px;
+    place-content: center;
+    padding: 24px;
+    border: 1px dashed rgba(14, 98, 104, 0.22);
+    border-radius: 12px;
+    background: #f5fbf8;
+    text-align: center;
+}
+
+.profile-empty-state h3,
+.profile-empty-state p {
+    margin-bottom: 0;
+}
+
+.reservation-card-list {
+    display: grid;
+    gap: 12px;
+}
+
+.reservation-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(120px, 0.7fr) minmax(140px, 0.8fr);
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #f8fbfa;
+}
+
+.reservation-card strong,
+.reservation-card span {
+    display: block;
+}
+
+.reservation-card span {
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.profile-side-panel {
+    position: sticky;
+    top: 18px;
+    display: grid;
+    gap: 18px;
+}
+
+.history-section {
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
+.history-list {
+    display: grid;
+    gap: 10px;
+}
+
+.history-item {
+    display: grid;
+    gap: 2px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.history-item:last-child {
+    border-bottom: 0;
+}
+
+.history-item span,
+.history-item small,
+.small-empty-note {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+@media (max-width: 1180px) {
+    .profile-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-side-panel {
+        position: static;
+    }
+
+    .profile-summary-panel {
+        grid-template-columns: 70px minmax(0, 1fr);
+    }
+
+    .profile-stat-grid {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-page .booking-main {
+        padding-bottom: 92px;
+    }
+
+    .profile-page .court-header {
+        min-height: 0;
+        padding: 22px 16px 18px;
+        border-radius: 0 0 18px 18px;
+    }
+
+    .profile-page .court-header h1 {
+        font-size: 1.72rem;
+    }
+
+    .profile-workspace {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 14px 12px 0;
+    }
+
+    .profile-summary-panel,
+    .reservations-panel,
+    .profile-side-panel {
+        padding: 18px;
+    }
+
+    .profile-summary-panel {
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .profile-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        font-size: 1.5rem;
+    }
+
+    .profile-stat-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .profile-stat {
+        min-height: 62px;
+        padding: 10px;
+    }
+
+    .profile-section-header {
+        display: grid;
+    }
+
+    .reservation-card {
+        grid-template-columns: 1fr;
+    }
+
+    .court-page .booking-main {
+        padding-bottom: 158px;
+    }
+
+    .court-page .day-panels {
+        padding-bottom: 166px;
+    }
+
+    .court-page .mobile-cart-bar {
+        right: 10px;
+        bottom: 84px;
+        left: 10px;
+        min-height: 68px;
+        border-radius: 18px;
+        box-shadow: 0 -10px 30px rgba(15, 52, 58, 0.18);
+    }
+
+    .court-page .mobile-bottom-nav {
+        display: grid;
     }
 }
