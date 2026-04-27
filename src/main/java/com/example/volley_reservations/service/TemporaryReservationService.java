@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,6 +24,10 @@ public class TemporaryReservationService {
 
     // Add a temporary reservation
     public synchronized boolean addTemporaryReservation(int userId, LocalDate date, String time, int fieldNumber) {
+        if (fieldNumber < 1 || fieldNumber > 2) {
+            return false;
+        }
+
         cleanupExpiredReservations(); // remove expired before adding
 
         String key = generateKey(date, time, fieldNumber);
@@ -78,6 +83,17 @@ public class TemporaryReservationService {
         temporaryReservations.remove(userId);
     }
 
+    public synchronized void clearUserReservations(int userId) {
+        List<TemporaryReservation> userRes = temporaryReservations.remove(userId);
+        if (userRes == null) {
+            return;
+        }
+
+        for (TemporaryReservation temp : userRes) {
+            lockedReservations.remove(generateKey(temp.getDate(), temp.getTime(), temp.getFieldNumber()));
+        }
+    }
+
     // Cleanup expired reservations
     private synchronized void cleanupExpiredReservations() {
         LocalDateTime now = LocalDateTime.now();
@@ -107,5 +123,24 @@ public class TemporaryReservationService {
 
         String key = generateKey(date, time, fieldNumber);
         return lockedReservations.containsKey(key);
+    }
+
+    public synchronized Set<String> findTemporaryReservedSlotKeys(int fieldNumber, LocalDate startDate, LocalDate endDate) {
+        cleanupExpiredReservations();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        Set<String> reservedKeys = new HashSet<>();
+
+        for (List<TemporaryReservation> reservations : temporaryReservations.values()) {
+            for (TemporaryReservation reservation : reservations) {
+                LocalDate date = reservation.getDate();
+                boolean inRange = !date.isBefore(startDate) && !date.isAfter(endDate);
+                if (inRange && reservation.getFieldNumber() == fieldNumber) {
+                    reservedKeys.add(date.format(formatter) + " " + reservation.getTime());
+                }
+            }
+        }
+
+        return reservedKeys;
     }
 }

@@ -57,7 +57,8 @@ class UserServiceTests {
         verify(userRepository).save(argThat(user ->
                 user.getUsername().equals("newbieee") &&
                         user.getPassword().equals("hashed_password") &&
-                        user.isActive()
+                        user.isActive() &&
+                        user.getRole().equals("USER")
         ));
     }
 }

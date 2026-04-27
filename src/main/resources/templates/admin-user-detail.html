@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/site.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<main class="container py-4 app-shell admin-shell">
+    <header class="app-topbar admin-topbar">
+        <div>
+            <p class="eyebrow">Admin user detail</p>
+            <h1 class="mb-0" th:text="${detail.summary.user.username}">Username</h1>
+            <p class="lead-copy">Reservation history, no-shows, and blacklist history for this account.</p>
+        </div>
+        <div class="topbar-actions">
+            <form th:action="@{/admin}" method="get">
+                <button type="submit" class="btn btn-secondary">Back to Admin</button>
+            </form>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-outline-danger">Logout</button>
+            </form>
+        </div>
+    </header>
+
+    <section class="admin-kpi-grid" aria-label="User stats">
+        <div class="admin-kpi">
+            <span>Role</span>
+            <strong th:text="${detail.summary.user.role}">USER</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>Total reservations</span>
+            <strong th:text="${detail.summary.totalReservations}">0</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>Upcoming</span>
+            <strong th:text="${detail.summary.upcomingReservations}">0</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>No-shows</span>
+            <strong th:text="${detail.summary.noShowCount}">0</strong>
+        </div>
+        <div class="admin-kpi admin-kpi-wide">
+            <span>Blacklist</span>
+            <strong th:if="${detail.summary.activeBlacklist == null}">Clear</strong>
+            <strong th:if="${detail.summary.activeBlacklist != null}">
+                Until <span th:text="${#temporals.format(detail.summary.activeBlacklist.endsAt, 'dd MMM yyyy HH:mm')}"></span>
+            </strong>
+        </div>
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="eyebrow">Reservations</p>
+                <h2>Reservation history</h2>
+            </div>
+            <span class="price-pill" th:text="${detail.reservations.size()} + ' reservations'">0 reservations</span>
+        </div>
+
+        <div class="table-responsive admin-table-wrap">
+            <table class="table table-bordered table-hover align-middle admin-table">
+                <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Court</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Attendance</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="reservation : ${detail.reservations}">
+                    <td th:text="${reservation.reservation_date}">date</td>
+                    <td th:text="${reservation.reservation_time}">time</td>
+                    <td th:text="${reservation.field_number}">1</td>
+                    <td>
+                        <span class="status-pill"
+                              th:classappend="${reservation.status == 'NO_SHOW'} ? ' status-danger' : (${reservation.status == 'ATTENDED'} ? ' status-ok' : ' status-neutral')"
+                              th:text="${reservation.statusLabel}">Reserved</span>
+                    </td>
+                    <td>
+                        <span th:if="${reservation.payment != null}" th:text="${reservation.payment.statusLabel}">Payment</span>
+                        <span th:if="${reservation.payment == null}">No payment</span>
+                    </td>
+                    <td>
+                        <div class="admin-actions attendance-actions">
+                            <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/attended'}" method="post">
+                                <button type="submit" class="btn btn-success btn-sm">Attended</button>
+                            </form>
+                            <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/no-show'}" method="post">
+                                <input class="form-control form-control-sm" name="reason" placeholder="No-show reason">
+                                <button type="submit" class="btn btn-danger btn-sm">No-show</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-heading">
+            <div>
+                <p class="eyebrow">Blacklist history</p>
+                <h2>Restrictions</h2>
+            </div>
+            <span class="price-pill" th:text="${detail.blacklistHistory.size()} + ' entries'">0 entries</span>
+        </div>
+
+        <div th:if="${detail.blacklistHistory.isEmpty()}" class="alert alert-info">
+            This user has no blacklist history.
+        </div>
+
+        <div th:if="${!detail.blacklistHistory.isEmpty()}" class="table-responsive admin-table-wrap">
+            <table class="table table-bordered table-hover align-middle admin-table">
+                <thead class="table-dark">
+                <tr>
+                    <th>Status</th>
+                    <th>Reason</th>
+                    <th>Started</th>
+                    <th>Ends</th>
+                    <th>Created by</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entry : ${detail.blacklistHistory}">
+                    <td th:text="${entry.statusLabel}">Active</td>
+                    <td th:text="${entry.reason}">Reason</td>
+                    <td th:text="${#temporals.format(entry.startsAt, 'dd MMM yyyy HH:mm')}">Start</td>
+                    <td th:text="${#temporals.format(entry.endsAt, 'dd MMM yyyy HH:mm')}">End</td>
+                    <td th:text="${entry.createdByAdmin != null ? entry.createdByAdmin.username : 'System'}">Admin</td>
+                    <td>
+                        <form th:if="${entry.activeNow}" th:action="@{'/admin/blacklist/' + ${entry.blacklistId} + '/remove'}" method="post">
+                            <button type="submit" class="btn btn-secondary btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/site.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<main class="container py-4 app-shell admin-shell">
+    <header class="app-topbar admin-topbar">
+        <div>
+            <p class="eyebrow">Admin</p>
+            <h1 class="mb-0">Operations Dashboard</h1>
+            <p class="lead-copy">Monitor users, reservations, payments, no-shows, and temporary blacklists.</p>
+        </div>
+        <div class="topbar-actions">
+            <form th:action="@{/home}" method="get">
+                <button type="submit" class="btn btn-secondary">Booking Site</button>
+            </form>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-outline-danger">Logout</button>
+            </form>
+        </div>
+    </header>
+
+    <nav class="admin-nav" aria-label="Admin sections">
+        <a href="#users">Users</a>
+        <a href="#reservations">Reservations</a>
+        <a href="#blacklist">Blacklist</a>
+    </nav>
+
+    <div th:if="${adminMessage}" class="alert alert-success">
+        <p th:text="${adminMessage}"></p>
+    </div>
+
+    <section class="admin-kpi-grid" aria-label="Dashboard stats">
+        <div class="admin-kpi">
+            <span>Total users</span>
+            <strong th:text="${stats.totalUsers}">0</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>Active blacklists</span>
+            <strong th:text="${stats.activeBlacklists}">0</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>Reservations today</span>
+            <strong th:text="${stats.reservationsToday}">0</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>Reservations this week</span>
+            <strong th:text="${stats.reservationsThisWeek}">0</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>No-shows this month</span>
+            <strong th:text="${stats.noShowsThisMonth}">0</strong>
+        </div>
+        <div class="admin-kpi">
+            <span>Pending payments</span>
+            <strong th:text="${stats.pendingPayments}">0</strong>
+        </div>
+        <div class="admin-kpi admin-kpi-wide">
+            <span>Confirmed revenue</span>
+            <strong><span th:text="${stats.confirmedRevenueLei}">0</span> lei</strong>
+        </div>
+    </section>
+
+    <section class="admin-section" id="users">
+        <div class="admin-section-heading">
+            <div>
+                <p class="eyebrow">Registered users</p>
+                <h2>Users and booking history</h2>
+            </div>
+            <span class="price-pill" th:text="${users.size()} + ' users'">0 users</span>
+        </div>
+
+        <div class="table-responsive admin-table-wrap">
+            <table class="table table-bordered table-hover align-middle admin-table">
+                <thead class="table-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Active</th>
+                    <th>Total reservations</th>
+                    <th>Upcoming</th>
+                    <th>No-shows</th>
+                    <th>Blacklist</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="summary : ${users}">
+                    <td>
+                        <a th:href="@{'/admin/users/' + ${summary.user.user_id}}" th:text="${summary.user.username}">username</a>
+                    </td>
+                    <td th:text="${summary.user.role}">USER</td>
+                    <td th:text="${summary.user.active ? 'Yes' : 'No'}">Yes</td>
+                    <td th:text="${summary.totalReservations}">0</td>
+                    <td th:text="${summary.upcomingReservations}">0</td>
+                    <td th:text="${summary.noShowCount}">0</td>
+                    <td>
+                        <span th:if="${summary.activeBlacklist == null}" class="status-pill status-ok">Clear</span>
+                        <span th:if="${summary.activeBlacklist != null}" class="status-pill status-danger">
+                            Until <span th:text="${#temporals.format(summary.activeBlacklist.endsAt, 'dd MMM HH:mm')}"></span>
+                        </span>
+                    </td>
+                    <td>
+                        <div class="admin-actions">
+                            <form th:if="${summary.activeBlacklist == null}"
+                                  th:action="@{'/admin/users/' + ${summary.user.user_id} + '/blacklist'}"
+                                  method="post">
+                                <input class="form-control form-control-sm" name="reason" placeholder="Reason">
+                                <button type="submit" class="btn btn-danger btn-sm">Blacklist 2 weeks</button>
+                            </form>
+                            <form th:if="${summary.activeBlacklist != null}"
+                                  th:action="@{'/admin/blacklist/' + ${summary.activeBlacklist.blacklistId} + '/remove'}"
+                                  method="post">
+                                <button type="submit" class="btn btn-secondary btn-sm">Remove blacklist</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-section" id="reservations">
+        <div class="admin-section-heading">
+            <div>
+                <p class="eyebrow">Reservations</p>
+                <h2>Recent booking activity</h2>
+            </div>
+            <span class="price-pill">Latest 80</span>
+        </div>
+
+        <div class="table-responsive admin-table-wrap">
+            <table class="table table-bordered table-hover align-middle admin-table">
+                <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Court</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Attendance</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="reservation : ${recentReservations}">
+                    <td th:text="${reservation.reservation_date}">date</td>
+                    <td th:text="${reservation.reservation_time}">time</td>
+                    <td th:text="${reservation.field_number}">1</td>
+                    <td>
+                        <a th:href="@{'/admin/users/' + ${reservation.user.user_id}}" th:text="${reservation.user.username}">username</a>
+                    </td>
+                    <td>
+                        <span class="status-pill"
+                              th:classappend="${reservation.status == 'NO_SHOW'} ? ' status-danger' : (${reservation.status == 'ATTENDED'} ? ' status-ok' : ' status-neutral')"
+                              th:text="${reservation.statusLabel}">Reserved</span>
+                    </td>
+                    <td>
+                        <span th:if="${reservation.payment != null}" th:text="${reservation.payment.statusLabel}">Payment</span>
+                        <span th:if="${reservation.payment == null}">No payment</span>
+                    </td>
+                    <td>
+                        <div class="admin-actions attendance-actions">
+                            <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/attended'}" method="post">
+                                <button type="submit" class="btn btn-success btn-sm">Attended</button>
+                            </form>
+                            <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/no-show'}" method="post">
+                                <input class="form-control form-control-sm" name="reason" placeholder="No-show reason">
+                                <button type="submit" class="btn btn-danger btn-sm">No-show</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-section" id="blacklist">
+        <div class="admin-section-heading">
+            <div>
+                <p class="eyebrow">Blacklist</p>
+                <h2>Active booking restrictions</h2>
+            </div>
+            <span class="price-pill" th:text="${activeBlacklists.size()} + ' active'">0 active</span>
+        </div>
+
+        <div th:if="${activeBlacklists.isEmpty()}" class="alert alert-info">
+            No users are currently blacklisted.
+        </div>
+
+        <div th:if="${!activeBlacklists.isEmpty()}" class="table-responsive admin-table-wrap">
+            <table class="table table-bordered table-hover align-middle admin-table">
+                <thead class="table-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Reason</th>
+                    <th>Started</th>
+                    <th>Ends</th>
+                    <th>Created by</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entry : ${activeBlacklists}">
+                    <td>
+                        <a th:href="@{'/admin/users/' + ${entry.user.user_id}}" th:text="${entry.user.username}">username</a>
+                    </td>
+                    <td th:text="${entry.reason}">Reason</td>
+                    <td th:text="${#temporals.format(entry.startsAt, 'dd MMM yyyy HH:mm')}">Start</td>
+                    <td th:text="${#temporals.format(entry.endsAt, 'dd MMM yyyy HH:mm')}">End</td>
+                    <td th:text="${entry.createdByAdmin != null ? entry.createdByAdmin.username : 'System'}">Admin</td>
+                    <td>
+                        <form th:action="@{'/admin/blacklist/' + ${entry.blacklistId} + '/remove'}" method="post">
+                            <button type="submit" class="btn btn-secondary btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

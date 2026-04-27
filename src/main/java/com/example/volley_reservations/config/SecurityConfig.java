@@ -1,6 +1,5 @@
 package com.example.volley_reservations.config;
 
-import com.example.volley_reservations.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,12 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
-
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -29,7 +22,9 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity (enable later for production)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/register", "/css/**", "/js/**").permitAll() // Public endpoints
+                        .requestMatchers("/login", "/register", "/css/**", "/img/**", "/js/**", "/registry/payments/**").permitAll()
+                        .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/home", "/field/**", "/cart/**", "/payments/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

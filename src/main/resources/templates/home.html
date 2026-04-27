@@ -1,43 +1,103 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home</title>
+    <title>Beach Court Reservations</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/site.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-<div class="container py-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary">Welcome!</h1>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn-outline-danger" id="logoutButton">Logout</button>
-        </form>
-    </div>
-
-    <div class="mb-4">
-        <h3>Select a Field</h3>
-        <div class="d-flex flex-wrap mt-2">
-            <form th:action="@{/field/1}" method="get" class="me-2 mb-2">
-                <button type="submit" class="btn btn-primary btn-lg" id="field1Button">Field 1</button>
+<main class="container py-4 app-shell home-shell">
+    <header class="app-topbar">
+        <div>
+            <p class="eyebrow">Beach volley booking</p>
+            <h1 class="mb-0">Welcome! Beach Court Reservations</h1>
+            <p class="lead-copy">Two sand courts, seven days of slots, and a cart built for quick checkout.</p>
+        </div>
+        <div class="topbar-actions">
+            <form th:action="@{/admin}" method="get" sec:authorize="hasRole('ADMIN')">
+                <button type="submit" class="btn btn-secondary">Admin</button>
             </form>
-            <form th:action="@{/field/2}" method="get" class="me-2 mb-2">
-                <button type="submit" class="btn btn-primary btn-lg" id="field2Button">Field 2</button>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-outline-danger" id="logoutButton">Logout</button>
             </form>
         </div>
-    </div>
+    </header>
 
-    <!-- Go to Cart -->
-    <div>
-        <form th:action="@{/cart/view}" method="get">
+    <section class="home-dashboard" aria-label="Reservation overview">
+        <div class="intro-panel">
+            <div>
+                <p class="eyebrow">Open daily</p>
+                <h2 class="mb-3">Beach courts by the water</h2>
+                <p class="mb-0">Morning, afternoon, and evening reservations are available in fixed 90-minute slots.</p>
+            </div>
+            <div class="metric-row" aria-label="Booking details">
+                <div class="metric">
+                    <strong>2</strong>
+                    <span>courts</span>
+                </div>
+                <div class="metric">
+                    <strong>20</strong>
+                    <span>lei per slot</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="court-grid" aria-label="Choose a court">
+            <article class="court-card">
+                <div>
+                    <p class="eyebrow">Court 1</p>
+                    <h2>Seaside Court</h2>
+                    <p>Closest to the shoreline with a clear weekly schedule.</p>
+                </div>
+                <form th:action="@{/field/1}" method="get" data-loading-form>
+                    <button type="submit" class="btn btn-primary btn-lg" id="field1Button">
+                        <span class="btn-label">View Court 1</span>
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </article>
+
+            <article class="court-card">
+                <div>
+                    <p class="eyebrow">Court 2</p>
+                    <h2>Palm Court</h2>
+                    <p>A second sand court with the same daily time windows.</p>
+                </div>
+                <form th:action="@{/field/2}" method="get" data-loading-form>
+                    <button type="submit" class="btn btn-primary btn-lg" id="field2Button">
+                        <span class="btn-label">View Court 2</span>
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </article>
+        </div>
+    </section>
+
+    <div class="action-bar">
+        <form th:action="@{/cart/view}" method="get" class="quick-link">
             <input type="hidden" name="source" value="home" />
             <button type="submit" class="btn btn-success btn-lg">Go to Cart</button>
         </form>
     </div>
+</main>
 
-</div>
+<script>
+    document.querySelectorAll("[data-loading-form]").forEach(form => {
+        form.addEventListener("submit", () => {
+            const button = form.querySelector("button[type='submit']");
+            if (!button) {
+                return;
+            }
+
+            button.classList.add("is-loading");
+            button.disabled = true;
+            button.setAttribute("aria-busy", "true");
+        });
+    });
+</script>
 
 </body>
 </html>

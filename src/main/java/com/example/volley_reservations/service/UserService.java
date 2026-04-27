@@ -32,6 +32,7 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setActive(true);
+        user.setRole("USER");
 
         userRepository.save(user);
         return "User registered successfully";

@@ -44,18 +44,18 @@ class ReservationServiceTest {
     }
 
     @Test
-    void testCreateNewReservation_FailsIfAlreadyExists() {
+    void testCreateNewReservation_FailsIfSlotAlreadyExists() {
         ReservationRequest request = new ReservationRequest();
         request.setUser_id(1);
         request.setReservation_date(LocalDate.of(2026, 1, 28));
         request.setReservation_time("14:00");
         request.setField_number(1);
 
-        when(reservationRepository.existsReservation(1, request.getReservation_date(), "14:00"))
+        when(reservationRepository.existsSlot(request.getReservation_date(), "14:00", 1))
                 .thenReturn(true);
 
         String response = reservationService.createNewReservation(request);
-        assertEquals("Reservation already exists for this time slot!", response);
+        assertEquals("Reservation already exists for this court and time slot!", response);
 
         verify(reservationRepository, never()).save(any(Reservation.class));
     }

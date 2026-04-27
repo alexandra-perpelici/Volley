@@ -1,10 +1,13 @@
 package com.example.volley_reservations.controller;
 
+import com.example.volley_reservations.model.Payment;
 import com.example.volley_reservations.model.TemporaryReservation;
 import com.example.volley_reservations.model.User;
 import com.example.volley_reservations.repository.UserRepository;
+import com.example.volley_reservations.service.PaymentService;
 import com.example.volley_reservations.service.ReservationService;
 import com.example.volley_reservations.service.TemporaryReservationService;
+import com.example.volley_reservations.service.UserBlacklistService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -23,13 +26,19 @@ public class TemporaryCartController {
     private final TemporaryReservationService tempResService;
     private final UserRepository userRepository;
     private final ReservationService reservationService;
+    private final PaymentService paymentService;
+    private final UserBlacklistService blacklistService;
 
     public TemporaryCartController(TemporaryReservationService tempResService,
                                    UserRepository userRepository,
-                                   ReservationService reservationService) {
+                                   ReservationService reservationService,
+                                   PaymentService paymentService,
+                                   UserBlacklistService blacklistService) {
         this.tempResService = tempResService;
         this.userRepository = userRepository;
         this.reservationService = reservationService;
+        this.paymentService = paymentService;
+        this.blacklistService = blacklistService;
     }
 
     @PostMapping("/back")
@@ -57,7 +66,19 @@ public class TemporaryCartController {
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
 
+        if (!isSupportedCourt(fieldNumber)) {
+            redirectAttributes.addFlashAttribute("message", "Invalid court selected");
+            return "redirect:/home";
+        }
+
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        try {
+            blacklistService.validateUserCanReserve(user);
+        } catch (IllegalStateException exception) {
+            redirectAttributes.addFlashAttribute("message", exception.getMessage());
+            return "redirect:/field/" + fieldNumber;
+        }
+
         boolean success = tempResService.addTemporaryReservation(user.getUser_id(), reservationDate, reservationTime, fieldNumber);
 
         if (!success) {
@@ -84,6 +105,7 @@ public class TemporaryCartController {
         List<TemporaryReservation> cart = tempResService.getUserReservations(user.getUser_id());
         model.addAttribute("cart", cart);
         model.addAttribute("totalPrice", cart.size() * 20);
+        model.addAttribute("activeBlacklist", blacklistService.findActiveForUser(user).orElse(null));
 
 
         // Update session-based previousPage only as backup
@@ -123,27 +145,36 @@ public class TemporaryCartController {
         return "redirect:/cart/view";
     }
 
-    // Confirm and persist reservations
+    // Confirm slots and create a pending payment ticket
     @PostMapping("/confirm")
     public String confirmCart(@RequestParam(required = false) Integer fieldNumber,
+                              @RequestParam(required = false) String paymentMethod,
                               Authentication authentication,
-                              HttpSession session) {
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
-        tempResService.confirmReservations(user.getUser_id(), reservationService, user);
+        List<TemporaryReservation> cart = tempResService.getUserReservations(user.getUser_id());
 
-        if (fieldNumber != null) {
-            return "redirect:/field/" + fieldNumber;
+        try {
+            blacklistService.validateUserCanReserve(user);
+            Payment payment = paymentService.createPendingPayment(user, cart, paymentMethod);
+            tempResService.clearUserReservations(user.getUser_id());
+            return "redirect:/payments/" + payment.getConfirmationToken();
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            redirectAttributes.addFlashAttribute("message", exception.getMessage());
+            if (fieldNumber != null) {
+                redirectAttributes.addAttribute("fieldNumber", fieldNumber);
+            } else if ("home".equals(session.getAttribute("previousPage"))) {
+                redirectAttributes.addAttribute("source", "home");
+            }
+            return "redirect:/cart/view";
         }
-
-        String previousPage = (String) session.getAttribute("previousPage");
-        if (previousPage != null) {
-            return "redirect:/" + previousPage;
-        }
-
-        return "redirect:/home";
     }
 
 
+    private boolean isSupportedCourt(int fieldNumber) {
+        return fieldNumber == 1 || fieldNumber == 2;
+    }
 
 
 }

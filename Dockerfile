@@ -6,12 +6,14 @@ COPY .mvn .mvn
 COPY mvnw .
 COPY src src
 
-RUN chmod +x mvnw && ./mvnw -DskipTests package
+RUN chmod +x mvnw \
+    && ./mvnw -DskipTests --no-transfer-progress clean package \
+    && jar tf target/Volley_Reservations-0.0.1-SNAPSHOT.jar | grep 'BOOT-INF/lib/postgresql-'
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/Volley_Reservations-0.0.1-SNAPSHOT.jar app.jar
 
 ENV JAVA_OPTS=""
 EXPOSE 8080

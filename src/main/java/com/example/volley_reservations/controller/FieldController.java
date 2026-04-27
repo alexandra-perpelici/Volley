@@ -6,7 +6,6 @@ import com.example.volley_reservations.repository.UserRepository;
 import com.example.volley_reservations.service.ReservationService;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +35,12 @@ public class FieldController {
     @GetMapping("/{fieldNumber}")
     public String showField(@PathVariable int fieldNumber, Model model)
     {
-        populateModel(model, fieldNumber);
+        if (!isSupportedCourt(fieldNumber)) {
+            return "redirect:/home";
+        }
+
         reservationService.deleteOldReservations();
+        populateModel(model, fieldNumber);
         if (fieldNumber == 1)
             return "field1";
         if(fieldNumber == 2)
@@ -47,43 +50,25 @@ public class FieldController {
 
     @GetMapping("/{fieldNumber}/cart")
     public String goToCart(@PathVariable int fieldNumber) {
+        if (!isSupportedCourt(fieldNumber)) {
+            return "redirect:/home";
+        }
+
         return "redirect:/cart/view?fieldNumber=" + fieldNumber;
     }
 
     @GetMapping("/{fieldNumber}/matrix")
     @ResponseBody
     public Map<String, Boolean> getReservationMatrix(@PathVariable int fieldNumber) {
+        if (!isSupportedCourt(fieldNumber)) {
+            return Collections.emptyMap();
+        }
+
         Map<String, Boolean> reservationMatrix = new HashMap<>();
         LocalDate today = LocalDate.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        // same time slots logic as populateModel
-        List<String> timeSlots = new ArrayList<>();
-        LocalTime startTime = LocalTime.of(8, 0);
-        LocalTime endTime = LocalTime.of(20, 0);
-        while (startTime.isBefore(endTime)) {
-            LocalTime nextTime = startTime.plusMinutes(90);
-            timeSlots.add(startTime + " - " + startTime.plusMinutes(90));
-            startTime = startTime.plusMinutes(90);
-        }
-
-        for (int i = 0; i < 7; i++) {
-            LocalDate day = today.plusDays(i);
-            String dayString = day.format(dateFormatter);
-            for (String timeSlot : timeSlots) {
-                String key = dayString + " " + timeSlot;
-                boolean reserved = fieldNumber == 1
-                        ? reservationService.isReservedField1(key)
-                        : reservationService.isReservedField2(key);
-
-                // check temp reservations
-                if (!reserved && tempService.isTemporarilyReserved(day, timeSlot, fieldNumber)) {
-                    reserved = true;
-                }
-
-                reservationMatrix.put(key, reserved);
-            }
-        }
+        List<LocalDate> nextDays = createScheduleDays(today);
+        List<String> timeSlots = createTimeSlots();
+        reservationMatrix.putAll(buildReservationMatrix(fieldNumber, nextDays, timeSlots));
 
         return reservationMatrix;
     }
@@ -101,6 +86,11 @@ public class FieldController {
             return "redirect:/login";
         }
 
+        if (!isSupportedCourt(fieldNumber)) {
+            redirectAttributes.addFlashAttribute("message", "Invalid court selected");
+            return "redirect:/home";
+        }
+
         // 1. Get username from authentication
         String username = authentication.getName();
 
@@ -113,6 +103,7 @@ public class FieldController {
 
         // 3. Use the real user_id
         request.setUser_id(dbUser.get().getUser_id());
+        request.setField_number(fieldNumber);
 
         // 4. Create reservation
         String resultMessage = reservationService.createNewReservation(request);
@@ -167,11 +158,25 @@ public class FieldController {
 
     private void populateModel(Model model, int fieldNumber) {
         LocalDate today = LocalDate.now();
+        List<LocalDate> nextDays = createScheduleDays(today);
+        List<String> timeSlots = createTimeSlots();
+        Map<String, Boolean> reservationMatrix = buildReservationMatrix(fieldNumber, nextDays, timeSlots);
+
+        model.addAttribute("timeSlots", timeSlots);
+        model.addAttribute("days", nextDays);
+        model.addAttribute("reservation_matrix", reservationMatrix);
+        model.addAttribute("fieldNumber", fieldNumber);
+    }
+
+    private List<LocalDate> createScheduleDays(LocalDate startDate) {
         List<LocalDate> nextDays = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
-            nextDays.add(today.plusDays(i));
+            nextDays.add(startDate.plusDays(i));
         }
+        return nextDays;
+    }
 
+    private List<String> createTimeSlots() {
         List<String> timeSlots = new ArrayList<>();
         LocalTime startTime = LocalTime.of(8, 0);
         LocalTime endTime = LocalTime.of(20, 0);
@@ -180,31 +185,30 @@ public class FieldController {
             timeSlots.add(startTime + " - " + nextTime);
             startTime = nextTime;
         }
+        return timeSlots;
+    }
 
+    private Map<String, Boolean> buildReservationMatrix(int fieldNumber, List<LocalDate> days, List<String> timeSlots) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate startDate = days.getFirst();
+        LocalDate endDate = days.getLast();
+        Set<String> persistedReservations = reservationService.findReservedSlotKeys(fieldNumber, startDate, endDate);
+        Set<String> temporaryReservations = tempService.findTemporaryReservedSlotKeys(fieldNumber, startDate, endDate);
         Map<String, Boolean> reservationMatrix = new HashMap<>();
 
-        for (LocalDate day : nextDays) {
+        for (LocalDate day : days) {
             String dayString = day.format(dateFormatter);
             for (String timeSlot : timeSlots) {
                 String key = dayString + " " + timeSlot;
-                boolean reserved = fieldNumber == 1
-                        ? reservationService.isReservedField1(key)
-                        : reservationService.isReservedField2(key);
-
-                // Check temporary reservations
-                if (!reserved && tempService.isTemporarilyReserved(day, timeSlot, fieldNumber)) {
-                    reserved = true;
-                }
-
-                reservationMatrix.put(key, reserved);
+                reservationMatrix.put(key, persistedReservations.contains(key) || temporaryReservations.contains(key));
             }
         }
 
-        model.addAttribute("timeSlots", timeSlots);
-        model.addAttribute("days", nextDays);
-        model.addAttribute("reservation_matrix", reservationMatrix);
-        model.addAttribute("fieldNumber", fieldNumber);
+        return reservationMatrix;
+    }
+
+    private boolean isSupportedCourt(int fieldNumber) {
+        return fieldNumber == 1 || fieldNumber == 2;
     }
 
 }
