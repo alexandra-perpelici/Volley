@@ -112,6 +112,7 @@ public class PushNotificationService {
 
     private void sendToSubscription(WebPushSubscription savedSubscription, String payload) {
         try {
+            ensureBouncyCastleProvider();
             Notification notification = new Notification(
                     savedSubscription.getEndpoint(),
                     savedSubscription.getP256dh(),
@@ -133,12 +134,16 @@ public class PushNotificationService {
 
     private PushService getPushService() throws GeneralSecurityException {
         if (pushService == null) {
-            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-                Security.addProvider(new BouncyCastleProvider());
-            }
+            ensureBouncyCastleProvider();
             pushService = new PushService(vapidPublicKey, vapidPrivateKey, vapidSubject);
         }
         return pushService;
+    }
+
+    private void ensureBouncyCastleProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
     }
 
     private void disableSubscription(WebPushSubscription subscription) {
