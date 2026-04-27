@@ -1,0 +1,6 @@
+target
+.git
+.codex
+.codex-run
+chromedriver-win64
+*.log
