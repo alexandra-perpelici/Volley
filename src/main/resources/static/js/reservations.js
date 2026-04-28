@@ -3,12 +3,12 @@ const cells = document.querySelectorAll("td.available, td.reserved");
 cells.forEach(cell => {
     cell.addEventListener("click", () => {
         if (cell.classList.contains("reserved")) {
-            showToast("This slot is already reserved!");
+            showToast("Ora este deja rezervata.");
             return;
         }
 
         // Show popup
-        document.getElementById("popupSlot").innerText = "Slot: " + cell.innerText;
+        document.getElementById("popupSlot").innerText = "Ora: " + cell.innerText;
         document.getElementById("reservationPopup").style.display = "block";
 
         // Yes button

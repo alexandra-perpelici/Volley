@@ -22,10 +22,10 @@ public class UserService {
 
     public String registerUser(RegistrationRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return "User already exists";
+            return "Utilizatorul exista deja";
         }
         if(!request.getPassword().equals(request.getConfirmPassword())) {
-            return "Passwords do not match";
+            return "Parolele nu coincid";
         }
 
         User user = new User();
@@ -35,7 +35,7 @@ public class UserService {
         user.setRole("USER");
 
         userRepository.save(user);
-        return "User registered successfully";
+        return "Cont creat cu succes";
     }
 
 

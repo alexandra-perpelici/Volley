@@ -75,7 +75,7 @@ public class AdminService {
     @Transactional(readOnly = true)
     public AdminUserDetail getUserDetail(Integer userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Utilizatorul nu a fost gasit"));
         LocalDate today = LocalDate.now();
         AdminUserSummary summary = new AdminUserSummary(
                 user,
@@ -105,16 +105,16 @@ public class AdminService {
     @Transactional
     public void markReservationAttended(Integer reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Rezervarea nu a fost gasita"));
         reservation.setStatus(Reservation.STATUS_ATTENDED);
     }
 
     @Transactional
     public void markReservationNoShow(Integer reservationId, String adminUsername, String reason) {
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Rezervarea nu a fost gasita"));
         User admin = userRepository.findByUsername(adminUsername)
-                .orElseThrow(() -> new EntityNotFoundException("Admin user not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Administratorul nu a fost gasit"));
 
         reservation.setStatus(Reservation.STATUS_NO_SHOW);
         blacklistService.createTwoWeekBlacklist(reservation.getUser(), admin, reservation, reason);
@@ -123,9 +123,9 @@ public class AdminService {
     @Transactional
     public void blacklistUser(Integer userId, String adminUsername, String reason) {
         User targetUser = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Utilizatorul nu a fost gasit"));
         User admin = userRepository.findByUsername(adminUsername)
-                .orElseThrow(() -> new EntityNotFoundException("Admin user not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Administratorul nu a fost gasit"));
 
         blacklistService.createTwoWeekBlacklist(targetUser, admin, null, reason);
     }

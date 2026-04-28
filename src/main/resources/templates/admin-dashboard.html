@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0f5258">
-    <title>Admin Dashboard</title>
+    <meta name="theme-color" content="#087b93">
+    <title>Admin Riviera</title>
     <link rel="manifest" th:href="@{/manifest.webmanifest}">
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,85 +16,85 @@
     <header class="app-topbar admin-topbar">
         <div>
             <p class="eyebrow">Admin</p>
-            <h1 class="mb-0">Operations Dashboard</h1>
-            <p class="lead-copy">Monitor users, reservations, payments, no-shows, and temporary blacklists.</p>
+            <h1 class="mb-0">Panou administrare</h1>
+            <p class="lead-copy">Urmareste utilizatorii, rezervarile, platile, neprezentarile si restrictiile temporare.</p>
         </div>
         <div class="topbar-actions">
-            <button type="button" class="btn btn-secondary" data-pwa-install hidden>Install App</button>
-            <button type="button" class="btn btn-secondary" data-push-subscribe hidden>Enable Alerts</button>
-            <button type="button" class="btn btn-secondary" data-push-test hidden>Test Alert</button>
+            <button type="button" class="btn btn-secondary" data-pwa-install hidden>Instaleaza</button>
+            <button type="button" class="btn btn-secondary" data-push-subscribe hidden>Activeaza alerte</button>
+            <button type="button" class="btn btn-secondary" data-push-test hidden>Test alerta</button>
             <span class="push-status" data-push-status aria-live="polite"></span>
             <form th:action="@{/home}" method="get">
-                <button type="submit" class="btn btn-secondary">Booking Site</button>
+                <button type="submit" class="btn btn-secondary">Rezervari</button>
             </form>
             <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-outline-danger">Logout</button>
+                <button type="submit" class="btn btn-outline-danger">Iesire</button>
             </form>
         </div>
     </header>
 
-    <nav class="admin-nav" aria-label="Admin sections">
-        <a href="#users">Users</a>
-        <a href="#reservations">Reservations</a>
-        <a href="#blacklist">Blacklist</a>
+    <nav class="admin-nav" aria-label="Sectiuni admin">
+        <a href="#users">Utilizatori</a>
+        <a href="#reservations">Rezervari</a>
+        <a href="#blacklist">Restrictii</a>
     </nav>
 
     <div th:if="${adminMessage}" class="alert alert-success">
         <p th:text="${adminMessage}"></p>
     </div>
 
-    <section class="admin-kpi-grid" aria-label="Dashboard stats">
+    <section class="admin-kpi-grid" aria-label="Statistici">
         <div class="admin-kpi">
-            <span>Total users</span>
+            <span>Utilizatori</span>
             <strong th:text="${stats.totalUsers}">0</strong>
         </div>
         <div class="admin-kpi">
-            <span>Active blacklists</span>
+            <span>Restrictii active</span>
             <strong th:text="${stats.activeBlacklists}">0</strong>
         </div>
         <div class="admin-kpi">
-            <span>Reservations today</span>
+            <span>Rezervari azi</span>
             <strong th:text="${stats.reservationsToday}">0</strong>
         </div>
         <div class="admin-kpi">
-            <span>Reservations this week</span>
+            <span>Rezervari saptamana asta</span>
             <strong th:text="${stats.reservationsThisWeek}">0</strong>
         </div>
         <div class="admin-kpi">
-            <span>No-shows this month</span>
+            <span>Neprezentari luna asta</span>
             <strong th:text="${stats.noShowsThisMonth}">0</strong>
         </div>
         <div class="admin-kpi">
-            <span>Pending payments</span>
+            <span>Plati in asteptare</span>
             <strong th:text="${stats.pendingPayments}">0</strong>
         </div>
         <div class="admin-kpi admin-kpi-wide">
-            <span>Confirmed revenue</span>
-            <strong><span th:text="${stats.confirmedRevenueLei}">0</span> lei</strong>
+            <span>Incasari confirmate</span>
+            <strong><span th:text="${stats.confirmedRevenueLei}">0</span> RON</strong>
         </div>
     </section>
 
     <section class="admin-section" id="users">
         <div class="admin-section-heading">
             <div>
-                <p class="eyebrow">Registered users</p>
-                <h2>Users and booking history</h2>
+                <p class="eyebrow">Utilizatori</p>
+                <h2>Conturi si istoric rezervari</h2>
             </div>
-            <span class="price-pill" th:text="${users.size()} + ' users'">0 users</span>
+            <span class="price-pill" th:text="${users.size()} + ' utilizatori'">0 utilizatori</span>
         </div>
 
         <div class="table-responsive admin-table-wrap">
             <table class="table table-bordered table-hover align-middle admin-table">
                 <thead class="table-dark">
                 <tr>
-                    <th>User</th>
+                    <th>Utilizator</th>
                     <th>Role</th>
-                    <th>Active</th>
-                    <th>Total reservations</th>
-                    <th>Upcoming</th>
-                    <th>No-shows</th>
-                    <th>Blacklist</th>
-                    <th>Actions</th>
+                    <th>Activ</th>
+                    <th>Total rezervari</th>
+                    <th>Viitoare</th>
+                    <th>Neprezentari</th>
+                    <th>Restrictie</th>
+                    <th>Actiuni</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -103,14 +103,14 @@
                         <a th:href="@{'/admin/users/' + ${summary.user.user_id}}" th:text="${summary.user.username}">username</a>
                     </td>
                     <td th:text="${summary.user.role}">USER</td>
-                    <td th:text="${summary.user.active ? 'Yes' : 'No'}">Yes</td>
+                    <td th:text="${summary.user.active ? 'Da' : 'Nu'}">Da</td>
                     <td th:text="${summary.totalReservations}">0</td>
                     <td th:text="${summary.upcomingReservations}">0</td>
                     <td th:text="${summary.noShowCount}">0</td>
                     <td>
-                        <span th:if="${summary.activeBlacklist == null}" class="status-pill status-ok">Clear</span>
+                        <span th:if="${summary.activeBlacklist == null}" class="status-pill status-ok">Fara restrictie</span>
                         <span th:if="${summary.activeBlacklist != null}" class="status-pill status-danger">
-                            Until <span th:text="${#temporals.format(summary.activeBlacklist.endsAt, 'dd MMM HH:mm')}"></span>
+                            Pana la <span th:text="${#temporals.format(summary.activeBlacklist.endsAt, 'dd MMM HH:mm')}"></span>
                         </span>
                     </td>
                     <td>
@@ -118,13 +118,13 @@
                             <form th:if="${summary.activeBlacklist == null}"
                                   th:action="@{'/admin/users/' + ${summary.user.user_id} + '/blacklist'}"
                                   method="post">
-                                <input class="form-control form-control-sm" name="reason" placeholder="Reason">
-                                <button type="submit" class="btn btn-danger btn-sm">Blacklist 2 weeks</button>
+                                <input class="form-control form-control-sm" name="reason" placeholder="Motiv">
+                                <button type="submit" class="btn btn-danger btn-sm">Restrictioneaza 2 saptamani</button>
                             </form>
                             <form th:if="${summary.activeBlacklist != null}"
                                   th:action="@{'/admin/blacklist/' + ${summary.activeBlacklist.blacklistId} + '/remove'}"
                                   method="post">
-                                <button type="submit" class="btn btn-secondary btn-sm">Remove blacklist</button>
+                                <button type="submit" class="btn btn-secondary btn-sm">Ridica restrictia</button>
                             </form>
                         </div>
                     </td>
@@ -137,50 +137,50 @@
     <section class="admin-section" id="reservations">
         <div class="admin-section-heading">
             <div>
-                <p class="eyebrow">Reservations</p>
-                <h2>Recent booking activity</h2>
+                <p class="eyebrow">Rezervari</p>
+                <h2>Activitate recenta</h2>
             </div>
-            <span class="price-pill">Latest 80</span>
+            <span class="price-pill">Ultimele 80</span>
         </div>
 
         <div class="table-responsive admin-table-wrap">
             <table class="table table-bordered table-hover align-middle admin-table">
                 <thead class="table-dark">
                 <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Court</th>
-                    <th>User</th>
+                    <th>Data</th>
+                    <th>Ora</th>
+                    <th>Teren</th>
+                    <th>Utilizator</th>
                     <th>Status</th>
-                    <th>Payment</th>
-                    <th>Attendance</th>
+                    <th>Plata</th>
+                    <th>Prezenta</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="reservation : ${recentReservations}">
                     <td th:text="${reservation.reservation_date}">date</td>
                     <td th:text="${reservation.reservation_time}">time</td>
-                    <td th:text="${reservation.field_number}">1</td>
+                    <td th:text="${'Riviera ' + reservation.field_number}">Riviera 1</td>
                     <td>
                         <a th:href="@{'/admin/users/' + ${reservation.user.user_id}}" th:text="${reservation.user.username}">username</a>
                     </td>
                     <td>
                         <span class="status-pill"
                               th:classappend="${reservation.status == 'NO_SHOW'} ? ' status-danger' : (${reservation.status == 'ATTENDED'} ? ' status-ok' : ' status-neutral')"
-                              th:text="${reservation.statusLabel}">Reserved</span>
+                              th:text="${reservation.statusLabel}">Rezervata</span>
                     </td>
                     <td>
-                        <span th:if="${reservation.payment != null}" th:text="${reservation.payment.statusLabel}">Payment</span>
-                        <span th:if="${reservation.payment == null}">No payment</span>
+                        <span th:if="${reservation.payment != null}" th:text="${reservation.payment.statusLabel}">Plata</span>
+                        <span th:if="${reservation.payment == null}">Cash la teren</span>
                     </td>
                     <td>
                         <div class="admin-actions attendance-actions">
                             <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/attended'}" method="post">
-                                <button type="submit" class="btn btn-success btn-sm">Attended</button>
+                                <button type="submit" class="btn btn-success btn-sm">Prezent</button>
                             </form>
                             <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/no-show'}" method="post">
-                                <input class="form-control form-control-sm" name="reason" placeholder="No-show reason">
-                                <button type="submit" class="btn btn-danger btn-sm">No-show</button>
+                                <input class="form-control form-control-sm" name="reason" placeholder="Motiv neprezentare">
+                                <button type="submit" class="btn btn-danger btn-sm">Neprezentare</button>
                             </form>
                         </div>
                     </td>
@@ -193,26 +193,26 @@
     <section class="admin-section" id="blacklist">
         <div class="admin-section-heading">
             <div>
-                <p class="eyebrow">Blacklist</p>
-                <h2>Active booking restrictions</h2>
+                <p class="eyebrow">Restrictii</p>
+                <h2>Restrictii active la rezervari</h2>
             </div>
             <span class="price-pill" th:text="${activeBlacklists.size()} + ' active'">0 active</span>
         </div>
 
         <div th:if="${activeBlacklists.isEmpty()}" class="alert alert-info">
-            No users are currently blacklisted.
+            Nu exista utilizatori restrictionati acum.
         </div>
 
         <div th:if="${!activeBlacklists.isEmpty()}" class="table-responsive admin-table-wrap">
             <table class="table table-bordered table-hover align-middle admin-table">
                 <thead class="table-dark">
                 <tr>
-                    <th>User</th>
-                    <th>Reason</th>
-                    <th>Started</th>
-                    <th>Ends</th>
-                    <th>Created by</th>
-                    <th>Action</th>
+                    <th>Utilizator</th>
+                    <th>Motiv</th>
+                    <th>Start</th>
+                    <th>Final</th>
+                    <th>Adaugat de</th>
+                    <th>Actiune</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -220,13 +220,13 @@
                     <td>
                         <a th:href="@{'/admin/users/' + ${entry.user.user_id}}" th:text="${entry.user.username}">username</a>
                     </td>
-                    <td th:text="${entry.reason}">Reason</td>
+                    <td th:text="${entry.reason}">Motiv</td>
                     <td th:text="${#temporals.format(entry.startsAt, 'dd MMM yyyy HH:mm')}">Start</td>
-                    <td th:text="${#temporals.format(entry.endsAt, 'dd MMM yyyy HH:mm')}">End</td>
+                    <td th:text="${#temporals.format(entry.endsAt, 'dd MMM yyyy HH:mm')}">Final</td>
                     <td th:text="${entry.createdByAdmin != null ? entry.createdByAdmin.username : 'System'}">Admin</td>
                     <td>
                         <form th:action="@{'/admin/blacklist/' + ${entry.blacklistId} + '/remove'}" method="post">
-                            <button type="submit" class="btn btn-secondary btn-sm">Remove</button>
+                            <button type="submit" class="btn btn-secondary btn-sm">Ridica</button>
                         </form>
                     </td>
                 </tr>
@@ -236,7 +236,7 @@
     </section>
 </main>
 
-<script th:src="@{/js/pwa.js}"></script>
+<script th:src="@{/js/pwa.js(v='booking-ui-9')}"></script>
 
 </body>
 </html>

@@ -38,7 +38,7 @@ class UserServiceTests {
 
         String result = userService.registerUser(request);
 
-        assertEquals("Passwords do not match", result);
+        assertEquals("Parolele nu coincid", result);
         verify(userRepository, never()).save(any(User.class));
         verify(passwordEncoder, never()).encode(anyString());
     }
@@ -53,7 +53,7 @@ class UserServiceTests {
         when(userRepository.findByUsername("newbieee")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("securePass12")).thenReturn("hashed_password");
         String result = userService.registerUser(request);
-        assertEquals("User registered successfully", result);
+        assertEquals("Cont creat cu succes", result);
         verify(userRepository).save(argThat(user ->
                 user.getUsername().equals("newbieee") &&
                         user.getPassword().equals("hashed_password") &&

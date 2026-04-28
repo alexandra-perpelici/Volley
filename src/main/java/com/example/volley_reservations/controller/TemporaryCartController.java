@@ -1,12 +1,11 @@
 package com.example.volley_reservations.controller;
 
-import com.example.volley_reservations.model.Payment;
 import com.example.volley_reservations.model.TemporaryReservation;
 import com.example.volley_reservations.model.User;
 import com.example.volley_reservations.repository.UserRepository;
 import com.example.volley_reservations.security.CustomUserDetails;
+import com.example.volley_reservations.service.BookingPricing;
 import com.example.volley_reservations.service.PaymentService;
-import com.example.volley_reservations.service.ReservationService;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import com.example.volley_reservations.service.UserBlacklistService;
 import jakarta.servlet.http.HttpSession;
@@ -26,18 +25,15 @@ public class TemporaryCartController {
 
     private final TemporaryReservationService tempResService;
     private final UserRepository userRepository;
-    private final ReservationService reservationService;
     private final PaymentService paymentService;
     private final UserBlacklistService blacklistService;
 
     public TemporaryCartController(TemporaryReservationService tempResService,
                                    UserRepository userRepository,
-                                   ReservationService reservationService,
                                    PaymentService paymentService,
                                    UserBlacklistService blacklistService) {
         this.tempResService = tempResService;
         this.userRepository = userRepository;
-        this.reservationService = reservationService;
         this.paymentService = paymentService;
         this.blacklistService = blacklistService;
     }
@@ -68,7 +64,7 @@ public class TemporaryCartController {
             RedirectAttributes redirectAttributes) {
 
         if (!isSupportedCourt(fieldNumber)) {
-            redirectAttributes.addFlashAttribute("message", "Invalid court selected");
+            redirectAttributes.addFlashAttribute("message", "Teren invalid.");
             return "redirect:/home";
         }
 
@@ -83,11 +79,11 @@ public class TemporaryCartController {
         boolean success = tempResService.addTemporaryReservation(userId, reservationDate, reservationTime, fieldNumber);
 
         if (!success) {
-            redirectAttributes.addFlashAttribute("message", "This slot is temporarily locked by another user.");
+            redirectAttributes.addFlashAttribute("message", "Ora este blocata temporar de alt utilizator.");
             return "redirect:/field/" + fieldNumber;
         }
 
-        redirectAttributes.addFlashAttribute("message", "Slot added to your cart.");
+        redirectAttributes.addFlashAttribute("message", "Ora a fost adaugata in cos.");
         return "redirect:/field/" + fieldNumber;
     }
 
@@ -104,9 +100,11 @@ public class TemporaryCartController {
 
         List<TemporaryReservation> cart = tempResService.getUserReservations(userId);
         model.addAttribute("cart", cart);
-        model.addAttribute("totalPrice", cart.size() * 20);
+        model.addAttribute("totalPrice", BookingPricing.totalPriceRon(cart));
         model.addAttribute("selectedCount", cart.size());
-        model.addAttribute("selectedTotal", cart.size() * 20);
+        model.addAttribute("selectedTotal", BookingPricing.totalPriceRon(cart));
+        model.addAttribute("slotPrice", BookingPricing.defaultSlotPriceRon());
+        model.addAttribute("pricePerHour", BookingPricing.PRICE_PER_HOUR_RON);
         model.addAttribute("activeBlacklist", blacklistService.findActiveForUserId(userId).orElse(null));
         model.addAttribute("source", source);
 
@@ -152,10 +150,9 @@ public class TemporaryCartController {
         return "redirect:/cart/view";
     }
 
-    // Confirm slots and create a pending payment ticket
+    // Confirm slots and record that payment will be cash at the field.
     @PostMapping("/confirm")
     public String confirmCart(@RequestParam(required = false) Integer fieldNumber,
-                              @RequestParam(required = false) String paymentMethod,
                               Authentication authentication,
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
@@ -165,9 +162,10 @@ public class TemporaryCartController {
 
         try {
             blacklistService.validateUserCanReserve(user);
-            Payment payment = paymentService.createPendingPayment(user, cart, paymentMethod);
+            paymentService.createCashAtFieldReservation(user, cart);
             tempResService.clearUserReservations(user.getUser_id());
-            return "redirect:/payments/" + payment.getConfirmationToken();
+            redirectAttributes.addFlashAttribute("message", "Rezervarea a fost confirmata. Plata se face cash la teren.");
+            return "redirect:/profile";
         } catch (IllegalArgumentException | IllegalStateException exception) {
             redirectAttributes.addFlashAttribute("message", exception.getMessage());
             if (fieldNumber != null) {

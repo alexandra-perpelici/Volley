@@ -33,7 +33,7 @@ public class AdminController {
     public String markAttended(@PathVariable Integer reservationId,
                                RedirectAttributes redirectAttributes) {
         adminService.markReservationAttended(reservationId);
-        redirectAttributes.addFlashAttribute("adminMessage", "Reservation marked as attended.");
+        redirectAttributes.addFlashAttribute("adminMessage", "Rezervarea a fost marcata ca prezenta.");
         return "redirect:/admin#reservations";
     }
 
@@ -43,7 +43,7 @@ public class AdminController {
                              Authentication authentication,
                              RedirectAttributes redirectAttributes) {
         adminService.markReservationNoShow(reservationId, authentication.getName(), reason);
-        redirectAttributes.addFlashAttribute("adminMessage", "Reservation marked as no-show and user blacklisted for 2 weeks.");
+        redirectAttributes.addFlashAttribute("adminMessage", "Rezervarea a fost marcata ca neprezentare, iar utilizatorul a fost restrictionat 2 saptamani.");
         return "redirect:/admin#reservations";
     }
 
@@ -53,7 +53,7 @@ public class AdminController {
                                 Authentication authentication,
                                 RedirectAttributes redirectAttributes) {
         adminService.blacklistUser(userId, authentication.getName(), reason);
-        redirectAttributes.addFlashAttribute("adminMessage", "User blacklisted for 2 weeks.");
+        redirectAttributes.addFlashAttribute("adminMessage", "Utilizatorul a fost restrictionat 2 saptamani.");
         return "redirect:/admin#users";
     }
 
@@ -61,7 +61,7 @@ public class AdminController {
     public String removeBlacklist(@PathVariable Integer blacklistId,
                                   RedirectAttributes redirectAttributes) {
         adminService.revokeBlacklist(blacklistId);
-        redirectAttributes.addFlashAttribute("adminMessage", "Blacklist entry removed.");
+        redirectAttributes.addFlashAttribute("adminMessage", "Restrictia a fost ridicata.");
         return "redirect:/admin#blacklist";
     }
 

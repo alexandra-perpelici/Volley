@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0f5258">
-    <title>Login</title>
+    <meta name="theme-color" content="#087b93">
+    <title>Autentificare</title>
     <link rel="manifest" th:href="@{/manifest.webmanifest}">
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,20 +15,20 @@
 <main class="auth-page">
     <section class="card shadow auth-card" id="loginCard" aria-labelledby="loginTitle">
         <div class="auth-card-body">
-            <p class="eyebrow text-center">Member access</p>
-            <h1 class="auth-title card-title" id="loginTitle">Beach Volley Login</h1>
+            <p class="eyebrow text-center">Acces cont</p>
+            <h1 class="auth-title card-title" id="loginTitle">Autentificare Riviera</h1>
 
             <div th:if="${successMessage}" class="alert alert-success mb-3" role="alert" id="successMessage">
                 <p th:text="${successMessage}"></p>
             </div>
 
             <div th:if="${param.error}" class="alert alert-danger mb-3" role="alert" id="loginError">
-                Invalid username or password
+                Utilizator sau parola incorecta
             </div>
 
             <form th:action="@{/login}" method="post" autocomplete="off" id="loginForm">
                 <div class="mb-3">
-                    <label class="form-label" for="usernameInput">Username</label>
+                    <label class="form-label" for="usernameInput">Utilizator</label>
                     <input
                             type="text"
                             id="usernameInput"
@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="passwordInput">Password</label>
+                    <label class="form-label" for="passwordInput">Parola</label>
                     <input
                             type="password"
                             id="passwordInput"
@@ -52,13 +52,13 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary" id="loginButton">
-                    Login
+                    Intra in cont
                 </button>
             </form>
 
             <form th:action="@{/register}" method="get" class="mt-3" id="registerForm">
                 <button type="submit" class="btn btn-secondary" id="registerButton">
-                    Register
+                    Creeaza cont
                 </button>
             </form>
         </div>

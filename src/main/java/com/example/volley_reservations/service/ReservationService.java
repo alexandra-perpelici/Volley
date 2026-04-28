@@ -11,9 +11,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,7 +77,7 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.findReservationsForFieldBetweenDates(fieldNumber, startDate, endDate);
 
         Set<String> slotKeys = reservations.stream()
-                .map(reservation -> reservation.getReservation_date().format(formatter) + " " + reservation.getReservation_time())
+                .flatMap(reservation -> toVisibleSlotKeys(reservation, formatter).stream())
                 .collect(Collectors.toSet());
         Set<String> immutableSlotKeys = Set.copyOf(slotKeys);
         reservedSlotCache.put(cacheKey, new ReservedSlotCacheEntry(immutableSlotKeys));
@@ -101,14 +104,14 @@ public class ReservationService {
             Reservation reservation = createReservation(request, null);
             eventPublisher.publishEvent(new ReservationNotificationEvent(
                     reservation.getUser().getUsername(),
-                    20,
+                    BookingPricing.priceForSlot(reservation.getReservation_time()),
                     List.of(new ReservationNotificationEvent.ReservationNotificationSlot(
                             reservation.getReservation_date(),
                             reservation.getReservation_time(),
                             reservation.getField_number()
                     ))
             ));
-            return "Reservation Created";
+            return "Rezervarea a fost creata.";
         } catch (IllegalArgumentException | IllegalStateException exception) {
             return exception.getMessage();
         }
@@ -130,11 +133,73 @@ public class ReservationService {
 
     private void validateReservation(ReservationRequest request) {
         if (request.getField_number() < 1 || request.getField_number() > 2) {
-            throw new IllegalArgumentException("Invalid court selected");
+            throw new IllegalArgumentException("Teren invalid.");
         }
 
-        if (reservationRepository.existsSlot(request.getReservation_date(), request.getReservation_time(), request.getField_number())) {
-            throw new IllegalStateException("Reservation already exists for this court and time slot!");
+        if (reservationRepository.existsSlot(request.getReservation_date(), request.getReservation_time(), request.getField_number())
+                || overlapsExistingReservation(request)) {
+            throw new IllegalStateException("Exista deja o rezervare pentru acest teren si interval.");
+        }
+    }
+
+    private boolean overlapsExistingReservation(ReservationRequest request) {
+        TimeRange requestedRange = parseTimeRange(request.getReservation_time());
+        if (requestedRange == null) {
+            return false;
+        }
+
+        return reservationRepository.findReservationsForFieldBetweenDates(
+                        request.getField_number(),
+                        request.getReservation_date(),
+                        request.getReservation_date()
+                ).stream()
+                .map(reservation -> parseTimeRange(reservation.getReservation_time()))
+                .filter(Objects::nonNull)
+                .anyMatch(existingRange -> requestedRange.overlaps(existingRange));
+    }
+
+    private List<String> toVisibleSlotKeys(Reservation reservation, DateTimeFormatter formatter) {
+        TimeRange reservationRange = parseTimeRange(reservation.getReservation_time());
+        String day = reservation.getReservation_date().format(formatter);
+        if (reservationRange == null) {
+            return List.of(day + " " + reservation.getReservation_time());
+        }
+
+        List<String> keys = new ArrayList<>();
+        LocalTime cursor = LocalTime.of(8, 0);
+        LocalTime scheduleEnd = LocalTime.of(20, 0);
+        while (cursor.isBefore(scheduleEnd)) {
+            LocalTime next = cursor.plusHours(1);
+            TimeRange visibleSlot = new TimeRange(cursor, next);
+            if (visibleSlot.overlaps(reservationRange)) {
+                keys.add(day + " " + cursor + " - " + next);
+            }
+            cursor = next;
+        }
+        return keys;
+    }
+
+    private TimeRange parseTimeRange(String value) {
+        if (value == null || !value.contains(" - ")) {
+            return null;
+        }
+
+        try {
+            String[] parts = value.split(" - ");
+            LocalTime start = LocalTime.parse(parts[0]);
+            LocalTime end = LocalTime.parse(parts[1]);
+            if (!start.isBefore(end)) {
+                return null;
+            }
+            return new TimeRange(start, end);
+        } catch (RuntimeException exception) {
+            return null;
+        }
+    }
+
+    private record TimeRange(LocalTime start, LocalTime end) {
+        boolean overlaps(TimeRange other) {
+            return start.isBefore(other.end) && other.start.isBefore(end);
         }
     }
 

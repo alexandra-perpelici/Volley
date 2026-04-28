@@ -61,7 +61,7 @@ public class UserBlacklistService {
     private void validateActiveBlacklist(Optional<UserBlacklistEntry> activeBlacklist) {
         if (activeBlacklist.isPresent()) {
             UserBlacklistEntry entry = activeBlacklist.get();
-            throw new IllegalStateException("This account is blacklisted from reservations until "
+            throw new IllegalStateException("Acest cont nu poate face rezervari pana la "
                     + entry.getEndsAt().format(DISPLAY_FORMAT) + ".");
         }
     }
@@ -89,7 +89,7 @@ public class UserBlacklistService {
     @Transactional
     public void revokeBlacklist(Integer blacklistId) {
         UserBlacklistEntry entry = blacklistRepository.findById(blacklistId)
-                .orElseThrow(() -> new EntityNotFoundException("Blacklist entry not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Restrictia nu a fost gasita"));
         if (entry.getRevokedAt() == null) {
             entry.setRevokedAt(LocalDateTime.now());
         }
@@ -112,7 +112,7 @@ public class UserBlacklistService {
 
     private String normalizeReason(String reason) {
         if (reason == null || reason.isBlank()) {
-            return "No-show";
+            return "Neprezentare";
         }
         return reason.trim();
     }

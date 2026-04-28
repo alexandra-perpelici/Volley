@@ -2,6 +2,7 @@ package com.example.volley_reservations.controller;
 
 import com.example.volley_reservations.model.TemporaryReservation;
 import com.example.volley_reservations.security.CustomUserDetails;
+import com.example.volley_reservations.service.BookingPricing;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import com.example.volley_reservations.service.UserBlacklistService;
 import org.springframework.security.core.Authentication;
@@ -35,7 +36,9 @@ public class LoginController {
 
         model.addAttribute("cart", cart);
         model.addAttribute("selectedCount", cart.size());
-        model.addAttribute("selectedTotal", cart.size() * 20);
+        model.addAttribute("selectedTotal", BookingPricing.totalPriceRon(cart));
+        model.addAttribute("slotPrice", BookingPricing.defaultSlotPriceRon());
+        model.addAttribute("pricePerHour", BookingPricing.PRICE_PER_HOUR_RON);
         model.addAttribute("activeBlacklist", blacklistService.findActiveForUserId(userId).orElse(null));
         return "home";
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Payment URL</title>
+    <title>Rezervare</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link th:href="@{/css/site.css}" rel="stylesheet">
 </head>
@@ -12,32 +12,32 @@
 <main class="container py-4 app-shell payment-shell">
     <header class="app-topbar">
         <div>
-            <p class="eyebrow">Payment</p>
-            <h1 class="mb-0">Payment URL</h1>
-            <p class="lead-copy">Show this URL to the registry so they can confirm your payment.</p>
+            <p class="eyebrow">Rezervare</p>
+            <h1 class="mb-0">Detalii rezervare</h1>
+            <p class="lead-copy">Rezervarea este salvata. Plata se face cash la teren.</p>
         </div>
     </header>
 
     <section class="detail-panel">
-        <label class="form-label" for="registryUrl">Registry confirmation URL</label>
+        <label class="form-label" for="registryUrl">Link intern confirmare</label>
         <input id="registryUrl" class="form-control" readonly th:value="${registryUrl}">
     </section>
 
-    <section class="detail-grid" aria-label="Payment details">
+    <section class="detail-grid" aria-label="Detalii plata">
         <div class="detail-item">
             <span>Status</span>
             <strong th:text="${payment.statusLabel}"></strong>
         </div>
         <div class="detail-item">
-            <span>Payment method</span>
+            <span>Plata</span>
             <strong th:text="${payment.paymentMethodLabel}"></strong>
         </div>
         <div class="detail-item">
             <span>Total</span>
-            <strong><span th:text="${payment.amountLei}"></span> lei</strong>
+            <strong><span th:text="${payment.amountLei}"></span> RON</strong>
         </div>
         <div class="detail-item">
-            <span>Reservations</span>
+            <span>Rezervari</span>
             <strong th:text="${payment.reservations.size()}"></strong>
         </div>
     </section>
@@ -46,23 +46,23 @@
         <table class="table table-bordered table-hover text-center align-middle stack-table">
             <thead class="table-dark">
             <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Time</th>
-                <th scope="col">Court</th>
+                <th scope="col">Data</th>
+                <th scope="col">Ora</th>
+                <th scope="col">Teren</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="reservation : ${payment.reservations}">
-                <td data-label="Date" th:text="${reservation.reservation_date}"></td>
-                <td data-label="Time" th:text="${reservation.reservation_time}"></td>
-                <td data-label="Court" th:text="${reservation.field_number}"></td>
+                <td data-label="Data" th:text="${reservation.reservation_date}"></td>
+                <td data-label="Ora" th:text="${reservation.reservation_time}"></td>
+                <td data-label="Teren" th:text="${'Riviera ' + reservation.field_number}"></td>
             </tr>
             </tbody>
         </table>
     </div>
 
     <form th:action="@{/home}" method="get">
-        <button type="submit" class="btn btn-primary btn-lg">Back to Home</button>
+        <button type="submit" class="btn btn-primary btn-lg">Inapoi la start</button>
     </form>
 </main>
 

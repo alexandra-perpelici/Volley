@@ -7,14 +7,14 @@ import jakarta.validation.constraints.Size;
 
 public class RegistrationRequest {
 
-    @NotBlank(message = "Username is required")
+    @NotBlank(message = "Utilizatorul este obligatoriu")
     private String username;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @NotBlank(message = "Parola este obligatorie")
+    @Size(min = 6, message = "Parola trebuie sa aiba cel putin 6 caractere")
     private String password;
 
-    @NotBlank(message = "Confirm password is required")
+    @NotBlank(message = "Confirmarea parolei este obligatorie")
     private String confirmPassword;
 
     public String getUsername() {

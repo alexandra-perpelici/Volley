@@ -1,13 +1,13 @@
 {
-  "name": "Volley Reservations Admin",
-  "short_name": "Volley",
-  "description": "Manage beach court reservations and admin alerts.",
+  "name": "Rezervari Riviera",
+  "short_name": "Riviera",
+  "description": "Rezerva rapid terenurile Riviera 1 si Riviera 2.",
   "start_url": "/home",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#fffdf8",
-  "theme_color": "#0f5258",
+  "background_color": "#fff8ec",
+  "theme_color": "#087b93",
   "icons": [
     {
       "src": "/img/icons/icon-192.png",

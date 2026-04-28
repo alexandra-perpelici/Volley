@@ -94,6 +94,283 @@ p {
     flex-wrap: wrap;
 }
 
+/* Summer Riviera palette */
+:root {
+    --ink: #123f4a;
+    --muted: #5f7677;
+    --paper: #fff8ec;
+    --paper-strong: #ffffff;
+    --teal: #169ac2;
+    --teal-dark: #087b93;
+    --mint: #d9f4df;
+    --clay: #e96f56;
+    --gold: #f6bd57;
+    --sand: #f6dfae;
+    --palm: #2f8f5b;
+    --palm-dark: #1f6f46;
+    --sky: #c5ecf8;
+    --line: rgba(18, 63, 74, 0.14);
+    --line-strong: rgba(18, 63, 74, 0.24);
+    --shadow: 0 18px 48px rgba(8, 92, 112, 0.16);
+    --shadow-soft: 0 10px 28px rgba(8, 92, 112, 0.12);
+}
+
+body.bg-light {
+    background:
+        linear-gradient(180deg, rgba(197, 236, 248, 0.58), rgba(255, 248, 236, 0.96) 54%, rgba(246, 223, 174, 0.72)),
+        linear-gradient(120deg, rgba(47, 143, 91, 0.18), rgba(22, 154, 194, 0.18)),
+        url("/img/beach-volleyball-bg.png") center / cover fixed;
+}
+
+.schedule-page {
+    background:
+        linear-gradient(180deg, rgba(197, 236, 248, 0.64), rgba(255, 248, 236, 0.98) 58%),
+        linear-gradient(120deg, rgba(47, 143, 91, 0.16), rgba(246, 189, 87, 0.2)),
+        url("/img/beach-volleyball-bg.png") center / cover fixed;
+}
+
+.booking-layout {
+    border-color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 252, 244, 0.96);
+}
+
+.booking-sidebar {
+    background: linear-gradient(180deg, #087b93 0%, #0e8da6 42%, #2f8f5b 100%);
+}
+
+.brand-mark {
+    border-color: rgba(255, 248, 236, 0.62);
+    background: rgba(255, 248, 236, 0.14);
+}
+
+.booking-nav a:hover,
+.booking-nav a:focus,
+.booking-nav a.active,
+.sidebar-logout button:hover,
+.sidebar-logout button:focus {
+    background: rgba(255, 248, 236, 0.18);
+}
+
+.btn-primary,
+.btn-success,
+.day-tab.active,
+.court-switcher a.active,
+.slot-card.selected {
+    border-color: var(--teal-dark);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-success:hover,
+.btn-success:focus {
+    border-color: #066a7f;
+    background: linear-gradient(135deg, #066a7f, #0d8fb0);
+}
+
+.btn-secondary {
+    border-color: var(--palm-dark);
+    background: var(--palm-dark);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    border-color: #185b39;
+    background: #185b39;
+}
+
+.court-header {
+    padding: 22px;
+    border-bottom: 0;
+    border-radius: 0 0 16px 16px;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(8, 123, 147, 0.96), rgba(47, 143, 91, 0.88));
+    box-shadow: 0 16px 36px rgba(8, 92, 112, 0.12);
+    overflow: hidden;
+}
+
+.court-header h1,
+.court-header .eyebrow,
+.court-header .mobile-back-row,
+.court-header .mobile-back-row a {
+    color: #fff;
+}
+
+.court-header .eyebrow {
+    color: rgba(255, 248, 236, 0.86);
+}
+
+.court-meta span {
+    border-color: rgba(255, 255, 255, 0.58);
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.88);
+}
+
+.dashboard-page .court-header,
+.checkout-page .court-header,
+.profile-page .court-header {
+    background:
+        linear-gradient(135deg, rgba(8, 123, 147, 0.95), rgba(47, 143, 91, 0.82)),
+        url("/img/riviera-1-toon.png") center 54% / cover;
+}
+
+.court-page.court-one .court-header {
+    background:
+        linear-gradient(90deg, rgba(7, 85, 100, 0.88), rgba(7, 85, 100, 0.42)),
+        url("/img/riviera-1-toon.png") center 54% / cover;
+}
+
+.court-page.court-two .court-header {
+    background:
+        linear-gradient(90deg, rgba(7, 85, 100, 0.88), rgba(7, 85, 100, 0.36)),
+        url("/img/riviera-2-toon.png") center 54% / cover;
+}
+
+.dashboard-hero-panel {
+    background:
+        linear-gradient(135deg, rgba(8, 123, 147, 0.92), rgba(47, 143, 91, 0.72)),
+        url("/img/riviera-2-toon.png") center 58% / cover;
+}
+
+.dashboard-court-card,
+.cart-rail,
+.checkout-list-panel,
+.checkout-summary-panel,
+.schedule-card-ui {
+    border-color: rgba(8, 123, 147, 0.14);
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.dashboard-court-card::before {
+    background:
+        linear-gradient(180deg, rgba(8, 123, 147, 0.02), rgba(8, 123, 147, 0.2)),
+        url("/img/riviera-1-toon.png") center 58% / cover;
+}
+
+.dashboard-court-card:nth-of-type(2)::before {
+    background:
+        linear-gradient(180deg, rgba(8, 123, 147, 0.02), rgba(8, 123, 147, 0.2)),
+        url("/img/riviera-2-toon.png") center 58% / cover;
+}
+
+.court-switcher a {
+    border-color: rgba(8, 123, 147, 0.18);
+    color: var(--teal-dark);
+    background: #f2fbf7;
+}
+
+.court-switcher a:not(.active):hover,
+.court-switcher a:not(.active):focus {
+    border-color: rgba(47, 143, 91, 0.34);
+    background: #e9f7ee;
+}
+
+.day-strip {
+    background: rgba(255, 248, 236, 0.76);
+}
+
+.day-tab {
+    border-color: rgba(8, 123, 147, 0.12);
+    color: var(--teal-dark);
+    background: #fffdfa;
+}
+
+.day-tab-date {
+    color: #637a78;
+}
+
+.slot-card {
+    border-color: rgba(47, 143, 91, 0.36);
+    background: linear-gradient(180deg, #ffffff, #f4fbf5);
+}
+
+.slot-card .slot-status,
+.available {
+    color: #247346 !important;
+}
+
+.available {
+    background-color: rgba(217, 244, 223, 0.96) !important;
+}
+
+.available:hover {
+    background-color: rgba(196, 235, 207, 0.98) !important;
+    box-shadow: inset 0 0 0 2px rgba(47, 143, 91, 0.2);
+}
+
+.slot-card.reserved,
+.reserved {
+    border-color: rgba(233, 111, 86, 0.38);
+    color: #a53b2b !important;
+    background: rgba(233, 111, 86, 0.12) !important;
+}
+
+.slot-card.reserved .slot-status {
+    color: #a53b2b;
+}
+
+.cart-rail-header strong,
+.cart-rail-total strong {
+    color: var(--teal-dark);
+}
+
+.cart-line,
+.checkout-empty-state,
+.dashboard-cart-rail .empty-cart-note {
+    background: #f4fbf5;
+}
+
+.mobile-cart-bar {
+    background: linear-gradient(135deg, var(--teal-dark), var(--palm-dark));
+}
+
+.mobile-cart-bar button {
+    color: var(--ink);
+    background: var(--gold);
+}
+
+@media (max-width: 768px) {
+    body.bg-light.schedule-page {
+        background:
+            linear-gradient(180deg, rgba(197, 236, 248, 0.8), rgba(255, 248, 236, 0.98) 44%, rgba(244, 251, 245, 1));
+    }
+
+    .court-header {
+        min-height: 120px;
+        padding: 16px 16px 18px;
+        border-radius: 0 0 16px 16px;
+        background-position: center;
+    }
+
+    .court-page.court-one .court-header,
+    .court-page.court-two .court-header {
+        min-height: 132px;
+        background-position: center 54%;
+    }
+
+    .court-meta {
+        justify-content: center;
+    }
+
+    .court-page .day-strip {
+        background: rgba(255, 248, 236, 0.96);
+    }
+
+    .court-page .day-tab {
+        border-color: rgba(8, 123, 147, 0.14);
+        background: #fffdfa;
+    }
+
+    .court-page .day-tab.active {
+        border-color: var(--teal-dark);
+        background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    }
+
+    .dashboard-court-card::before {
+        height: 86px;
+    }
+}
+
 .push-status {
     display: inline-flex;
     align-items: center;
@@ -3025,5 +3302,506 @@ legend {
 
     .court-page .mobile-bottom-nav {
         display: grid;
+    }
+}
+
+/* Booking UI v5: simplify the reservation path */
+.court-switcher {
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 8px;
+    width: min(100%, 320px);
+}
+
+.court-switcher a {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    border: 1px solid rgba(14, 98, 104, 0.18);
+    border-radius: 8px;
+    color: var(--teal-dark);
+    background: #f3faf7;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.court-switcher a.active {
+    color: #fff;
+    border-color: var(--teal-dark);
+    background: var(--teal-dark);
+}
+
+.slot-card.is-adding {
+    border-color: var(--gold);
+    background: #fff5dd;
+    cursor: wait;
+}
+
+.day-tab {
+    gap: 3px;
+    border-color: rgba(18, 50, 56, 0.12);
+    color: var(--teal-dark);
+    background: #ffffff;
+}
+
+.day-tab-name {
+    color: inherit;
+    font-size: 0.92rem;
+    font-weight: 900;
+}
+
+.day-tab-date {
+    color: #516f72;
+    font-size: 0.78rem;
+}
+
+.day-tab.active .day-tab-name,
+.day-tab.active .day-tab-date {
+    color: #ffffff;
+}
+
+@media (min-width: 769px) {
+    .court-switcher {
+        margin-top: -6px;
+    }
+}
+
+@media (max-width: 768px) {
+    body.dashboard-page .mobile-bottom-nav,
+    body.court-page .mobile-bottom-nav,
+    body.checkout-page .mobile-bottom-nav {
+        display: none !important;
+    }
+
+    body.dashboard-page .booking-main,
+    body.checkout-page .booking-main {
+        padding-bottom: 24px;
+    }
+
+    body.court-page .booking-main {
+        padding-bottom: 110px;
+    }
+
+    .dashboard-page .court-header,
+    .court-page .court-header,
+    .checkout-page .court-header {
+        gap: 8px;
+        padding: 14px 16px 16px;
+        border-radius: 0 0 14px 14px;
+    }
+
+    .dashboard-page .court-header h1,
+    .court-page .court-header h1,
+    .checkout-page .court-header h1 {
+        font-size: 1.42rem;
+    }
+
+    .court-header .eyebrow {
+        display: none;
+    }
+
+    .mobile-back-row {
+        font-size: 0.94rem;
+    }
+
+    .court-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+        overflow: visible;
+    }
+
+    .court-meta span {
+        min-height: 28px;
+        padding: 0.3rem 0.55rem;
+        font-size: 0.75rem;
+    }
+
+    .dashboard-page .booking-progress,
+    .checkout-page .booking-progress {
+        display: none;
+    }
+
+    .dashboard-page .dashboard-workspace,
+    .checkout-page .checkout-workspace {
+        padding: 12px 14px 24px;
+    }
+
+    .dashboard-page .dashboard-hero-panel {
+        display: none;
+    }
+
+    .dashboard-courts {
+        gap: 10px;
+    }
+
+    .dashboard-court-card {
+        min-height: 0;
+        padding: 14px;
+    }
+
+    .dashboard-court-card::before {
+        height: 72px;
+        margin: -14px -14px 12px;
+    }
+
+    .dashboard-court-card h2 {
+        margin-bottom: 6px;
+        font-size: 1.32rem;
+    }
+
+    .dashboard-court-card p {
+        margin-bottom: 12px;
+    }
+
+    .dashboard-court-card .btn {
+        min-height: 48px;
+    }
+
+    .dashboard-page .dashboard-cart-rail {
+        display: none !important;
+    }
+
+    .court-switcher {
+        display: grid;
+        width: auto;
+        margin: 12px 12px 0;
+    }
+
+    .court-switcher a {
+        min-height: 48px;
+    }
+
+    .court-page .day-strip {
+        top: 0;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .court-page .day-tab {
+        flex-basis: 74px;
+        min-height: 50px;
+        background: #ffffff;
+    }
+
+    .court-page .day-tab.active {
+        border-color: var(--teal-dark);
+        color: #ffffff;
+        background: var(--teal-dark);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .court-page .day-tab.active .day-tab-name,
+    .court-page .day-tab.active .day-tab-date {
+        color: #ffffff;
+    }
+
+    .court-page .day-panels {
+        padding: 14px 12px 116px !important;
+    }
+
+    .court-page .slot-period + .slot-period {
+        margin-top: 16px;
+        padding-top: 16px;
+    }
+
+    .court-page .slot-period-header {
+        gap: 8px;
+    }
+
+    .court-page .slot-period-header h2 {
+        font-size: 1.08rem;
+    }
+
+    .court-page .slot-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .court-page .slot-card {
+        min-height: 64px;
+        padding: 0.64rem 0.5rem;
+    }
+
+    .court-page .slot-card .slot-time {
+        font-size: 0.88rem;
+    }
+
+    .court-page .slot-card .slot-status {
+        font-size: 0.76rem;
+    }
+
+    .court-page .mobile-cart-bar {
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+        min-height: 64px;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+        border-radius: 14px;
+    }
+
+    .court-page .mobile-cart-bar button {
+        min-width: 104px;
+        color: var(--ink);
+        background: var(--gold);
+    }
+
+    .checkout-page .checkout-empty-state {
+        min-height: 180px;
+    }
+
+    .checkout-page .checkout-summary-panel {
+        margin-bottom: 0;
+    }
+}
+
+/* Summer Riviera final layer */
+body.bg-light {
+    background:
+        linear-gradient(180deg, rgba(197, 236, 248, 0.58), rgba(255, 248, 236, 0.96) 54%, rgba(246, 223, 174, 0.72)),
+        linear-gradient(120deg, rgba(47, 143, 91, 0.18), rgba(22, 154, 194, 0.18)),
+        url("/img/beach-volleyball-bg.png") center / cover fixed;
+}
+
+.schedule-page {
+    background:
+        linear-gradient(180deg, rgba(197, 236, 248, 0.64), rgba(255, 248, 236, 0.98) 58%),
+        linear-gradient(120deg, rgba(47, 143, 91, 0.16), rgba(246, 189, 87, 0.2)),
+        url("/img/beach-volleyball-bg.png") center / cover fixed;
+}
+
+.booking-layout {
+    border-color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 252, 244, 0.96);
+}
+
+.booking-sidebar {
+    background: linear-gradient(180deg, #087b93 0%, #0e8da6 42%, #2f8f5b 100%);
+}
+
+.booking-nav a:hover,
+.booking-nav a:focus,
+.booking-nav a.active,
+.sidebar-logout button:hover,
+.sidebar-logout button:focus {
+    background: rgba(255, 248, 236, 0.18);
+}
+
+.btn-primary,
+.btn-success,
+.day-tab.active,
+.court-switcher a.active,
+.slot-card.selected {
+    border-color: var(--teal-dark);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-success:hover,
+.btn-success:focus {
+    border-color: #066a7f;
+    background: linear-gradient(135deg, #066a7f, #0d8fb0);
+}
+
+.btn-secondary {
+    border-color: var(--palm-dark);
+    background: var(--palm-dark);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    border-color: #185b39;
+    background: #185b39;
+}
+
+.court-header {
+    padding: 22px;
+    border-bottom: 0;
+    border-radius: 0 0 16px 16px;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(8, 123, 147, 0.96), rgba(47, 143, 91, 0.88));
+    box-shadow: 0 16px 36px rgba(8, 92, 112, 0.12);
+    overflow: hidden;
+}
+
+.court-header h1,
+.court-header .eyebrow,
+.court-header .mobile-back-row,
+.court-header .mobile-back-row a {
+    color: #fff;
+}
+
+.court-header .eyebrow {
+    color: rgba(255, 248, 236, 0.86);
+}
+
+.court-meta span {
+    border-color: rgba(255, 255, 255, 0.58);
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.88);
+}
+
+.dashboard-page .court-header,
+.checkout-page .court-header,
+.profile-page .court-header {
+    background:
+        linear-gradient(135deg, rgba(8, 123, 147, 0.95), rgba(47, 143, 91, 0.82)),
+        url("/img/riviera-1-toon.png") center 54% / cover;
+}
+
+.court-page.court-one .court-header {
+    background:
+        linear-gradient(90deg, rgba(7, 85, 100, 0.88), rgba(7, 85, 100, 0.42)),
+        url("/img/riviera-1-toon.png") center 54% / cover;
+}
+
+.court-page.court-two .court-header {
+    background:
+        linear-gradient(90deg, rgba(7, 85, 100, 0.88), rgba(7, 85, 100, 0.36)),
+        url("/img/riviera-2-toon.png") center 54% / cover;
+}
+
+.dashboard-hero-panel {
+    background:
+        linear-gradient(135deg, rgba(8, 123, 147, 0.92), rgba(47, 143, 91, 0.72)),
+        url("/img/riviera-2-toon.png") center 58% / cover;
+}
+
+.dashboard-court-card,
+.cart-rail,
+.checkout-list-panel,
+.checkout-summary-panel,
+.schedule-card-ui {
+    border-color: rgba(8, 123, 147, 0.14);
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.dashboard-court-card::before {
+    background:
+        linear-gradient(180deg, rgba(8, 123, 147, 0.02), rgba(8, 123, 147, 0.2)),
+        url("/img/riviera-1-toon.png") center 58% / cover;
+}
+
+.dashboard-court-card:nth-of-type(2)::before {
+    background:
+        linear-gradient(180deg, rgba(8, 123, 147, 0.02), rgba(8, 123, 147, 0.2)),
+        url("/img/riviera-2-toon.png") center 58% / cover;
+}
+
+.court-switcher a {
+    border-color: rgba(8, 123, 147, 0.18);
+    color: var(--teal-dark);
+    background: #f2fbf7;
+}
+
+.court-switcher a:not(.active):hover,
+.court-switcher a:not(.active):focus {
+    border-color: rgba(47, 143, 91, 0.34);
+    background: #e9f7ee;
+}
+
+.day-strip {
+    background: rgba(255, 248, 236, 0.76);
+}
+
+.day-tab {
+    border-color: rgba(8, 123, 147, 0.12);
+    color: var(--teal-dark);
+    background: #fffdfa;
+}
+
+.day-tab-date {
+    color: #637a78;
+}
+
+.slot-card {
+    border-color: rgba(47, 143, 91, 0.36);
+    background: linear-gradient(180deg, #ffffff, #f4fbf5);
+}
+
+.slot-card .slot-status,
+.available {
+    color: #247346 !important;
+}
+
+.available {
+    background-color: rgba(217, 244, 223, 0.96) !important;
+}
+
+.available:hover {
+    background-color: rgba(196, 235, 207, 0.98) !important;
+    box-shadow: inset 0 0 0 2px rgba(47, 143, 91, 0.2);
+}
+
+.slot-card.reserved,
+.reserved {
+    border-color: rgba(233, 111, 86, 0.38);
+    color: #a53b2b !important;
+    background: rgba(233, 111, 86, 0.12) !important;
+}
+
+.slot-card.reserved .slot-status {
+    color: #a53b2b;
+}
+
+.cart-rail-header strong,
+.cart-rail-total strong {
+    color: var(--teal-dark);
+}
+
+.cart-line,
+.checkout-empty-state,
+.dashboard-cart-rail .empty-cart-note {
+    background: #f4fbf5;
+}
+
+.mobile-cart-bar {
+    background: linear-gradient(135deg, var(--teal-dark), var(--palm-dark));
+}
+
+.mobile-cart-bar button {
+    color: var(--ink);
+    background: var(--gold);
+}
+
+@media (max-width: 768px) {
+    body.bg-light.schedule-page {
+        background:
+            linear-gradient(180deg, rgba(197, 236, 248, 0.8), rgba(255, 248, 236, 0.98) 44%, rgba(244, 251, 245, 1));
+    }
+
+    .court-header {
+        min-height: 120px;
+        padding: 16px 16px 18px;
+        border-radius: 0 0 16px 16px;
+        background-position: center;
+    }
+
+    .court-page.court-one .court-header,
+    .court-page.court-two .court-header {
+        min-height: 132px;
+        background-position: center 54%;
+    }
+
+    .court-meta {
+        justify-content: center;
+    }
+
+    .court-page .day-strip {
+        background: rgba(255, 248, 236, 0.96);
+    }
+
+    .court-page .day-tab {
+        border-color: rgba(8, 123, 147, 0.14);
+        background: #fffdfa;
+    }
+
+    .court-page .day-tab.active {
+        border-color: var(--teal-dark);
+        background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    }
+
+    .dashboard-court-card::before {
+        height: 86px;
     }
 }

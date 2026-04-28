@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0f5258">
-    <title>Volley Profile</title>
+    <meta name="theme-color" content="#087b93">
+    <title>Profil Riviera</title>
     <link rel="manifest" th:href="@{/manifest.webmanifest}">
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link th:href="@{/css/site.css(v='booking-ui-4')}" rel="stylesheet">
+    <link th:href="@{/css/site.css(v='booking-ui-9')}" rel="stylesheet">
 </head>
 <body class="bg-light schedule-page profile-page">
 
 <div class="booking-layout">
-    <aside class="booking-sidebar" aria-label="Main navigation">
+    <aside class="booking-sidebar" aria-label="Navigatie principala">
         <a class="brand-lockup" th:href="@{/home}">
             <span class="brand-mark">VB</span>
-            <span>VolleyBook</span>
+            <span>Riviera</span>
         </a>
         <nav class="booking-nav">
-            <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
-            <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Court 1</span></a>
-            <a th:href="@{/field/2}"><i class="bi bi-calendar2-week"></i><span>Court 2</span></a>
-            <a th:href="@{/cart/view(source='home')}"><i class="bi bi-bag-check"></i><span>Cart</span></a>
-            <a th:href="@{/profile}" class="active"><i class="bi bi-person"></i><span>Profile</span></a>
+            <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Rezerva</span></a>
+            <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Riviera 1</span></a>
+            <a th:href="@{/field/2}"><i class="bi bi-calendar2-week"></i><span>Riviera 2</span></a>
+            <a th:href="@{/cart/view(source='home')}"><i class="bi bi-bag-check"></i><span>Cos</span></a>
+            <a th:href="@{/profile}" class="active"><i class="bi bi-person"></i><span>Profil</span></a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"><i class="bi bi-speedometer2"></i><span>Admin</span></a>
         </nav>
         <form th:action="@{/logout}" method="post" class="sidebar-logout">
-            <button type="submit"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button>
+            <button type="submit"><i class="bi bi-box-arrow-left"></i><span>Iesire</span></button>
         </form>
     </aside>
 
@@ -36,30 +36,34 @@
         <header class="court-header profile-header">
             <div>
                 <div class="mobile-back-row">
-                    <a th:href="@{/home}" aria-label="Back to dashboard">&larr;</a>
-                    <span>VolleyBook</span>
+                    <a th:href="@{/home}" aria-label="Inapoi la start">&larr;</a>
+                    <span>Profil</span>
                 </div>
-                <p class="eyebrow">Profile</p>
-                <h1 th:text="${username}">Player</h1>
-                <div class="court-meta" aria-label="Profile details">
-                    <span th:text="${reservationCount + ' reservations'}">0 reservations</span>
-                    <span th:text="${upcomingCount + ' upcoming'}">0 upcoming</span>
-                    <span th:text="${selectedCount + ' selected'}">0 selected</span>
+                <p class="eyebrow">Profil</p>
+                <h1 th:text="${username}">Jucator</h1>
+                <div class="court-meta" aria-label="Detalii profil">
+                    <span th:text="${reservationCount + ' rezervari'}">0 rezervari</span>
+                    <span th:text="${upcomingCount + ' viitoare'}">0 viitoare</span>
+                    <span th:text="${selectedCount + ' in cos'}">0 in cos</span>
                 </div>
             </div>
             <div class="court-header-actions">
                 <form th:action="@{/field/1}" method="get">
-                    <button type="submit" class="btn btn-secondary">Court 1</button>
+                    <button type="submit" class="btn btn-secondary">Riviera 1</button>
                 </form>
                 <form th:action="@{/field/2}" method="get">
-                    <button type="submit" class="btn btn-secondary">Court 2</button>
+                    <button type="submit" class="btn btn-secondary">Riviera 2</button>
                 </form>
             </div>
         </header>
 
         <div th:if="${activeBlacklist}" class="alert alert-warning">
-            This account is blacklisted from reservations until
+            Acest cont nu poate face rezervari pana la
             <strong th:text="${#temporals.format(activeBlacklist.endsAt, 'dd MMM yyyy HH:mm')}"></strong>.
+        </div>
+
+        <div th:if="${message}" class="alert alert-success">
+            <p th:text="${message}"></p>
         </div>
 
         <section class="profile-workspace">
@@ -68,14 +72,14 @@
                     <i class="bi bi-person-fill"></i>
                 </div>
                 <div>
-                    <p class="eyebrow">Account</p>
-                    <h2 th:text="${username}">Player</h2>
-                    <p>Your upcoming bookings and recent reservation history are shown here.</p>
+                    <p class="eyebrow">Cont</p>
+                    <h2 th:text="${username}">Jucator</h2>
+                    <p>Aici vezi rezervarile viitoare si istoricul recent.</p>
                 </div>
                 <div class="profile-stat-grid">
                     <div class="profile-stat">
                         <strong th:text="${upcomingCount}">0</strong>
-                        <span>Upcoming</span>
+                        <span>Viitoare</span>
                     </div>
                     <div class="profile-stat">
                         <strong th:text="${reservationCount}">0</strong>
@@ -83,7 +87,7 @@
                     </div>
                     <div class="profile-stat">
                         <strong th:text="${selectedCount}">0</strong>
-                        <span>In cart</span>
+                        <span>In cos</span>
                     </div>
                 </div>
             </section>
@@ -91,23 +95,23 @@
             <section class="profile-panel reservations-panel">
                 <div class="profile-section-header">
                     <div>
-                        <p class="eyebrow">Reservations</p>
-                        <h2>Upcoming reservations</h2>
+                        <p class="eyebrow">Rezervari</p>
+                        <h2>Rezervari viitoare</h2>
                     </div>
                     <form th:action="@{/field/1}" method="get">
-                        <button type="submit" class="btn btn-primary">Book court</button>
+                        <button type="submit" class="btn btn-primary">Rezerva teren</button>
                     </form>
                 </div>
 
                 <div th:if="${upcomingReservations.isEmpty()}" class="profile-empty-state">
-                    <h3>No upcoming reservations</h3>
-                    <p>Book a slot from Court 1 or Court 2 and it will appear here.</p>
+                    <h3>Nu ai rezervari viitoare</h3>
+                    <p>Rezerva o ora pe Riviera 1 sau Riviera 2 si va aparea aici.</p>
                     <div class="checkout-empty-actions">
                         <form th:action="@{/field/1}" method="get">
-                            <button type="submit" class="btn btn-primary">Court 1</button>
+                            <button type="submit" class="btn btn-primary">Riviera 1</button>
                         </form>
                         <form th:action="@{/field/2}" method="get">
-                            <button type="submit" class="btn btn-primary">Court 2</button>
+                            <button type="submit" class="btn btn-primary">Riviera 2</button>
                         </form>
                     </div>
                 </div>
@@ -116,15 +120,15 @@
                     <article class="reservation-card" th:each="reservation : ${upcomingReservations}">
                         <div>
                             <strong th:text="${#temporals.format(reservation.reservation_date, 'dd MMM yyyy')}">20 May 2026</strong>
-                            <span th:text="${reservation.reservation_time}">08:00 - 09:30</span>
+                            <span th:text="${reservation.reservation_time}">08:00 - 09:00</span>
                         </div>
                         <div>
-                            <strong th:text="${'Court ' + reservation.field_number}">Court 1</strong>
-                            <span th:text="${reservation.statusLabel}">Reserved</span>
+                            <strong th:text="${'Riviera ' + reservation.field_number}">Riviera 1</strong>
+                            <span th:text="${reservation.statusLabel}">Rezervata</span>
                         </div>
                         <div>
-                            <strong th:text="${reservation.payment != null ? reservation.payment.amountLei + ' lei' : '20 lei'}">20 lei</strong>
-                            <span th:text="${reservation.payment != null ? reservation.payment.statusLabel : 'Reservation created'}">Pending</span>
+                            <strong th:text="${slotPrice + ' RON'}">40 RON</strong>
+                            <span th:text="${reservation.payment != null ? reservation.payment.statusLabel : 'Cash la teren'}">Cash la teren</span>
                         </div>
                     </article>
                 </div>
@@ -132,25 +136,25 @@
 
             <aside class="profile-panel profile-side-panel">
                 <div>
-                    <p class="eyebrow">Cart</p>
-                    <h2 th:text="${selectedTotal + ' lei'}">0 lei</h2>
-                    <p th:text="${selectedCount + ' selected slots'}">0 selected slots</p>
+                    <p class="eyebrow">Cos</p>
+                    <h2 th:text="${selectedTotal + ' RON'}">0 RON</h2>
+                    <p th:text="${selectedCount + ' selectate'}">0 selectate</p>
                 </div>
                 <form th:action="@{/cart/view}" method="get">
                     <input type="hidden" name="source" value="home">
-                    <button type="submit" class="btn btn-success btn-lg w-100" th:disabled="${selectedCount == 0}">Open cart</button>
+                    <button type="submit" class="btn btn-success btn-lg w-100" th:disabled="${selectedCount == 0}">Deschide cosul</button>
                 </form>
 
                 <div class="history-section">
-                    <p class="eyebrow">History</p>
+                    <p class="eyebrow">Istoric</p>
                     <div th:if="${reservationHistory.isEmpty()}" class="small-empty-note">
-                        No past reservations yet.
+                        Nu ai rezervari trecute.
                     </div>
                     <div th:if="${!reservationHistory.isEmpty()}" class="history-list">
                         <div class="history-item" th:each="reservation : ${reservationHistory}">
                             <strong th:text="${#temporals.format(reservation.reservation_date, 'dd MMM yyyy')}">12 May 2026</strong>
-                            <span th:text="${reservation.reservation_time + ' - Court ' + reservation.field_number}">08:00 - Court 1</span>
-                            <small th:text="${reservation.statusLabel}">Reserved</small>
+                            <span th:text="${reservation.reservation_time + ' - Riviera ' + reservation.field_number}">08:00 - Riviera 1</span>
+                            <small th:text="${reservation.statusLabel}">Rezervata</small>
                         </div>
                     </div>
                 </div>
@@ -159,11 +163,11 @@
     </main>
 </div>
 
-<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-    <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Home</span></a>
-    <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Courts</span></a>
-    <a th:href="@{/cart/view(source='home')}"><i class="bi bi-bag-check"></i><span>Cart</span></a>
-    <a th:href="@{/profile}" class="active"><i class="bi bi-person-fill"></i><span>Profile</span></a>
+<nav class="mobile-bottom-nav" aria-label="Navigatie mobila">
+    <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Start</span></a>
+    <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Terenuri</span></a>
+    <a th:href="@{/cart/view(source='home')}"><i class="bi bi-bag-check"></i><span>Cos</span></a>
+    <a th:href="@{/profile}" class="active"><i class="bi bi-person-fill"></i><span>Profil</span></a>
 </nav>
 
 <script th:src="@{/js/navigation-cache.js(v='2')}"></script>

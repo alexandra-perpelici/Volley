@@ -18,12 +18,12 @@ public class User {
     @Column(name = "user_id")
     private Integer user_id;
 
-    @NotBlank(message = "Username is required")
+    @NotBlank(message = "Numele de utilizator este obligatoriu")
     @Column(nullable = false)
     private String username;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @NotBlank(message = "Parola este obligatorie")
+    @Size(min = 6, message = "Parola trebuie sa aiba cel putin 6 caractere")
     @Column(nullable = false)
     private String password;
 

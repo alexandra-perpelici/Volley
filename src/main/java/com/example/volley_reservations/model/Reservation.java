@@ -100,15 +100,15 @@ public class Reservation {
 
     public String getStatusLabel() {
         if (STATUS_ATTENDED.equals(status)) {
-            return "Attended";
+            return "Prezent";
         }
         if (STATUS_NO_SHOW.equals(status)) {
-            return "No-show";
+            return "Neprezentat";
         }
         if (STATUS_CANCELLED.equals(status)) {
-            return "Cancelled";
+            return "Anulata";
         }
-        return "Reserved";
+        return "Rezervata";
     }
 
 }

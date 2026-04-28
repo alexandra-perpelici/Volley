@@ -14,6 +14,7 @@ public class Payment {
 
     public static final String METHOD_CARD = "CARD";
     public static final String METHOD_CASH_AT_REGISTRY = "CASH_AT_REGISTRY";
+    public static final String METHOD_CASH_AT_FIELD = "CASH_AT_FIELD";
     public static final String STATUS_PENDING = "PENDING";
     public static final String STATUS_CONFIRMED = "CONFIRMED";
 
@@ -112,16 +113,22 @@ public class Payment {
     }
 
     public String getPaymentMethodLabel() {
-        if (METHOD_CASH_AT_REGISTRY.equals(paymentMethod)) {
-            return "Cash at registry";
+        if (METHOD_CASH_AT_FIELD.equals(paymentMethod)) {
+            return "Cash la teren";
         }
-        return "Card at registry";
+        if (METHOD_CASH_AT_REGISTRY.equals(paymentMethod)) {
+            return "Cash la receptie";
+        }
+        return "Card la receptie";
     }
 
     public String getStatusLabel() {
         if (STATUS_CONFIRMED.equals(status)) {
-            return "Payment confirmed";
+            return "Plata confirmata";
         }
-        return "Pending registry confirmation";
+        if (METHOD_CASH_AT_FIELD.equals(paymentMethod)) {
+            return "Se plateste la teren";
+        }
+        return "Asteapta confirmare";
     }
 }

@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentService {
 
-    private static final int PRICE_PER_RESERVATION_LEI = 20;
-
     private final PaymentRepository paymentRepository;
     private final ReservationService reservationService;
     private final ApplicationEventPublisher eventPublisher;
@@ -37,15 +35,24 @@ public class PaymentService {
 
     @Transactional
     public Payment createPendingPayment(User user, List<TemporaryReservation> cart, String paymentMethod) {
+        return createPayment(user, cart, normalizePaymentMethod(paymentMethod), Payment.STATUS_PENDING);
+    }
+
+    @Transactional
+    public Payment createCashAtFieldReservation(User user, List<TemporaryReservation> cart) {
+        return createPayment(user, cart, Payment.METHOD_CASH_AT_FIELD, Payment.STATUS_PENDING);
+    }
+
+    private Payment createPayment(User user, List<TemporaryReservation> cart, String paymentMethod, String status) {
         if (cart == null || cart.isEmpty()) {
-            throw new IllegalArgumentException("Your cart is empty.");
+            throw new IllegalArgumentException("Cosul este gol.");
         }
 
         Payment payment = new Payment();
         payment.setUser(user);
-        payment.setPaymentMethod(normalizePaymentMethod(paymentMethod));
-        payment.setStatus(Payment.STATUS_PENDING);
-        payment.setAmountLei(cart.size() * PRICE_PER_RESERVATION_LEI);
+        payment.setPaymentMethod(paymentMethod);
+        payment.setStatus(status);
+        payment.setAmountLei(BookingPricing.totalPriceRon(cart));
         payment.setCreatedAt(LocalDateTime.now());
         payment.setConfirmationToken(UUID.randomUUID().toString());
 
@@ -69,7 +76,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public Payment findByToken(String confirmationToken) {
         return paymentRepository.findByConfirmationToken(confirmationToken)
-                .orElseThrow(() -> new EntityNotFoundException("Payment not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Plata nu a fost gasita"));
     }
 
     @Transactional
@@ -83,11 +90,13 @@ public class PaymentService {
     }
 
     private String normalizePaymentMethod(String paymentMethod) {
-        if (Payment.METHOD_CARD.equals(paymentMethod) || Payment.METHOD_CASH_AT_REGISTRY.equals(paymentMethod)) {
+        if (Payment.METHOD_CASH_AT_FIELD.equals(paymentMethod)
+                || Payment.METHOD_CASH_AT_REGISTRY.equals(paymentMethod)
+                || Payment.METHOD_CARD.equals(paymentMethod)) {
             return paymentMethod;
         }
 
-        throw new IllegalArgumentException("Choose card or cash at registry.");
+        throw new IllegalArgumentException("Alege plata cash la teren.");
     }
 
     private void publishReservationNotification(User user, Payment payment, List<Reservation> reservations) {

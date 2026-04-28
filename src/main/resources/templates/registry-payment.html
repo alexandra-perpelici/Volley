@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Confirm Payment</title>
+    <title>Confirma plata</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link th:href="@{/css/site.css}" rel="stylesheet">
 </head>
@@ -12,19 +12,19 @@
 <main class="container py-4 app-shell payment-shell">
     <header class="app-topbar">
         <div>
-            <p class="eyebrow">Registry</p>
-            <h1 class="mb-0">Confirm Payment</h1>
-            <p class="lead-copy">Review the cart and mark the registry payment as confirmed.</p>
+            <p class="eyebrow">Teren</p>
+            <h1 class="mb-0">Confirma plata</h1>
+            <p class="lead-copy">Verifica rezervarea si marcheaza plata cash ca incasata.</p>
         </div>
     </header>
 
     <div th:if="${confirmedNow}" class="alert alert-success">
-        Payment confirmed.
+        Plata a fost confirmata.
     </div>
 
-    <section class="detail-grid" aria-label="Payment details">
+    <section class="detail-grid" aria-label="Detalii plata">
         <div class="detail-item">
-            <span>User</span>
+            <span>Utilizator</span>
             <strong th:text="${payment.user.username}"></strong>
         </div>
         <div class="detail-item">
@@ -32,12 +32,12 @@
             <strong th:text="${payment.statusLabel}"></strong>
         </div>
         <div class="detail-item">
-            <span>Payment method</span>
+            <span>Plata</span>
             <strong th:text="${payment.paymentMethodLabel}"></strong>
         </div>
         <div class="detail-item">
             <span>Total</span>
-            <strong><span th:text="${payment.amountLei}"></span> lei</strong>
+            <strong><span th:text="${payment.amountLei}"></span> RON</strong>
         </div>
     </section>
 
@@ -45,16 +45,16 @@
         <table class="table table-bordered table-hover text-center align-middle stack-table">
             <thead class="table-dark">
             <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Time</th>
-                <th scope="col">Court</th>
+                <th scope="col">Data</th>
+                <th scope="col">Ora</th>
+                <th scope="col">Teren</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="reservation : ${payment.reservations}">
-                <td data-label="Date" th:text="${reservation.reservation_date}"></td>
-                <td data-label="Time" th:text="${reservation.reservation_time}"></td>
-                <td data-label="Court" th:text="${reservation.field_number}"></td>
+                <td data-label="Data" th:text="${reservation.reservation_date}"></td>
+                <td data-label="Ora" th:text="${reservation.reservation_time}"></td>
+                <td data-label="Teren" th:text="${'Riviera ' + reservation.field_number}"></td>
             </tr>
             </tbody>
         </table>
@@ -63,11 +63,11 @@
     <form th:if="${payment.status != 'CONFIRMED'}"
           th:action="@{'/registry/payments/' + ${payment.confirmationToken} + '/confirm'}"
           method="post">
-        <button type="submit" class="btn btn-success btn-lg">Confirm Payment</button>
+        <button type="submit" class="btn btn-success btn-lg">Confirma plata</button>
     </form>
 
     <div th:if="${payment.status == 'CONFIRMED'}" class="alert alert-success">
-        This payment has already been confirmed.
+        Plata este deja confirmata.
     </div>
 </main>
 

@@ -115,11 +115,11 @@ public class UserBlacklistEntry {
 
     public String getStatusLabel() {
         if (revokedAt != null) {
-            return "Removed";
+            return "Ridicata";
         }
         if (LocalDateTime.now().isAfter(endsAt)) {
-            return "Expired";
+            return "Expirata";
         }
-        return "Active";
+        return "Activa";
     }
 }

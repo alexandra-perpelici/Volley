@@ -55,7 +55,7 @@ class ReservationServiceTest {
                 .thenReturn(true);
 
         String response = reservationService.createNewReservation(request);
-        assertEquals("Reservation already exists for this court and time slot!", response);
+        assertEquals("Exista deja o rezervare pentru acest teren si interval.", response);
 
         verify(reservationRepository, never()).save(any(Reservation.class));
     }

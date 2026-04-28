@@ -2,6 +2,7 @@ package com.example.volley_reservations.controller;
 
 import com.example.volley_reservations.dto.ReservationRequest;
 import com.example.volley_reservations.security.CustomUserDetails;
+import com.example.volley_reservations.service.BookingPricing;
 import com.example.volley_reservations.service.ReservationService;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import org.springframework.security.core.Authentication;
@@ -79,12 +80,12 @@ public class FieldController {
                                 RedirectAttributes redirectAttributes) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            redirectAttributes.addFlashAttribute("message", "You must be logged in to make a reservation!");
+            redirectAttributes.addFlashAttribute("message", "Trebuie sa fii autentificat pentru a face o rezervare.");
             return "redirect:/login";
         }
 
         if (!isSupportedCourt(fieldNumber)) {
-            redirectAttributes.addFlashAttribute("message", "Invalid court selected");
+            redirectAttributes.addFlashAttribute("message", "Teren invalid.");
             return "redirect:/home";
         }
 
@@ -111,7 +112,7 @@ public class FieldController {
 //        LocalTime startTime = LocalTime.of(8, 0);
 //        LocalTime endTime = LocalTime.of(20, 0);
 //        while (startTime.isBefore(endTime)) {
-//            LocalTime nextTime = startTime.plusMinutes(90);
+//            LocalTime nextTime = startTime.plusMinutes(60);
 //            timeSlots.add(startTime + " - " + nextTime);
 //            startTime = nextTime;
 //        }
@@ -157,12 +158,16 @@ public class FieldController {
         model.addAttribute("timeSlots", timeSlots);
         model.addAttribute("timeSlotGroups", createTimeSlotGroups(timeSlots));
         model.addAttribute("days", nextDays);
+        model.addAttribute("dayLabels", createDayLabels(nextDays));
+        model.addAttribute("dayDateLabels", createDayDateLabels(nextDays));
         model.addAttribute("reservation_matrix", reservationMatrix);
         model.addAttribute("fieldNumber", fieldNumber);
         model.addAttribute("cart", cart);
         model.addAttribute("selected_slot_keys", selectedSlotKeys);
         model.addAttribute("selectedCount", cart.size());
-        model.addAttribute("selectedTotal", cart.size() * 20);
+        model.addAttribute("selectedTotal", BookingPricing.totalPriceRon(cart));
+        model.addAttribute("slotPrice", BookingPricing.defaultSlotPriceRon());
+        model.addAttribute("pricePerHour", BookingPricing.PRICE_PER_HOUR_RON);
     }
 
     private List<LocalDate> createScheduleDays(LocalDate startDate) {
@@ -178,7 +183,7 @@ public class FieldController {
         LocalTime startTime = LocalTime.of(8, 0);
         LocalTime endTime = LocalTime.of(20, 0);
         while (startTime.isBefore(endTime)) {
-            LocalTime nextTime = startTime.plusMinutes(90);
+            LocalTime nextTime = startTime.plusMinutes(60);
             timeSlots.add(startTime + " - " + nextTime);
             startTime = nextTime;
         }
@@ -202,10 +207,33 @@ public class FieldController {
         }
 
         return List.of(
-                new TimeSlotGroup("Morning", "08:00 - 12:30", morning),
-                new TimeSlotGroup("Afternoon", "12:30 - 18:30", afternoon),
-                new TimeSlotGroup("Evening", "18:30 - 20:00", evening)
+                new TimeSlotGroup("Dimineata", "08:00 - 12:00", morning),
+                new TimeSlotGroup("Dupa-amiaza", "12:00 - 18:00", afternoon),
+                new TimeSlotGroup("Seara", "18:00 - 20:00", evening)
         );
+    }
+
+    private Map<String, String> createDayLabels(List<LocalDate> days) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE", Locale.forLanguageTag("ro-RO"));
+        DateTimeFormatter keyFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        Map<String, String> labels = new HashMap<>();
+        for (int i = 0; i < days.size(); i++) {
+            labels.put(days.get(i).format(keyFormatter), i == 0 ? "Azi" : capitalize(formatter.format(days.get(i))));
+        }
+        return labels;
+    }
+
+    private Map<String, String> createDayDateLabels(List<LocalDate> days) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.forLanguageTag("ro-RO"));
+        DateTimeFormatter keyFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        return days.stream().collect(Collectors.toMap(day -> day.format(keyFormatter), day -> formatter.format(day).replace(".", "")));
+    }
+
+    private String capitalize(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        return value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1);
     }
 
     private List<com.example.volley_reservations.model.TemporaryReservation> findCurrentCart(Authentication authentication) {

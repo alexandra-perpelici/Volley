@@ -20,7 +20,7 @@
 
     async function initPwa() {
         if (!("serviceWorker" in navigator)) {
-            setPushStatus("Alerts unavailable");
+            setPushStatus("Alerte indisponibile");
             return;
         }
 
@@ -35,19 +35,19 @@
         }
 
         if (!("PushManager" in window) || !("Notification" in window)) {
-            setPushStatus("Alerts unavailable");
+            setPushStatus("Alerte indisponibile");
             return;
         }
 
         const response = await fetch("/api/push/public-key");
         if (!response.ok) {
-            setPushStatus("Alerts unavailable");
+            setPushStatus("Alerte indisponibile");
             return;
         }
 
         const config = await response.json();
         if (!config.enabled || !config.publicKey) {
-            setPushStatus("Alerts need setup");
+            setPushStatus("Alertele trebuie configurate");
             return;
         }
 
@@ -67,15 +67,15 @@
                     await subscribeForPush();
                     return;
                 }
-                setPushStatus("Alerts need refresh");
+                setPushStatus("Alertele trebuie reactivate");
                 return;
             }
             await saveSubscription(existingSubscription);
             markSubscribed();
         } else if (Notification.permission === "denied") {
-            setPushStatus("Alerts blocked");
+            setPushStatus("Alerte blocate");
         } else {
-            setPushStatus("Alerts off");
+            setPushStatus("Alerte oprite");
         }
     }
 
@@ -92,12 +92,12 @@
 
     async function subscribeForPush() {
         pushButton.disabled = true;
-        setPushStatus("Enabling alerts...");
+        setPushStatus("Activez alertele...");
 
         try {
             const permission = await Notification.requestPermission();
             if (permission !== "granted") {
-                setPushStatus("Alerts blocked");
+                setPushStatus("Alerte blocate");
                 return;
             }
 
@@ -109,7 +109,7 @@
             await saveSubscription(subscription);
             markSubscribed();
         } catch (error) {
-            setPushStatus("Alerts failed");
+            setPushStatus("Alertele au esuat");
             pushButton.disabled = false;
         }
     }
@@ -124,7 +124,7 @@
         });
 
         if (!response.ok) {
-            throw new Error("Subscription save failed");
+            throw new Error("Salvarea abonarii a esuat");
         }
     }
 
@@ -134,25 +134,25 @@
         }
 
         pushTestButton.disabled = true;
-        setPushStatus("Sending test...");
+        setPushStatus("Trimit test...");
 
         try {
             const response = await fetch("/api/push/test", { method: "POST" });
             if (!response.ok) {
-                throw new Error("Test failed");
+                throw new Error("Testul a esuat");
             }
-            setPushStatus("Test sent");
+            setPushStatus("Test trimis");
         } catch (error) {
-            setPushStatus("Test failed");
+            setPushStatus("Testul a esuat");
         } finally {
             pushTestButton.disabled = false;
         }
     }
 
     function markSubscribed() {
-        pushButton.textContent = "Alerts On";
+        pushButton.textContent = "Alerte active";
         pushButton.disabled = true;
-        setPushStatus("Alerts on");
+        setPushStatus("Alerte active");
 
         if (pushTestButton) {
             pushTestButton.hidden = false;

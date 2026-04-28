@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +33,7 @@ public class TemporaryReservationService {
 
         String key = generateKey(date, time, fieldNumber);
 
-        if (lockedReservations.containsKey(key)) {
+        if (lockedReservations.containsKey(key) || overlapsTemporaryReservation(date, time, fieldNumber)) {
             return false; // slot locked by another user
         }
 
@@ -136,11 +137,70 @@ public class TemporaryReservationService {
                 LocalDate date = reservation.getDate();
                 boolean inRange = !date.isBefore(startDate) && !date.isAfter(endDate);
                 if (inRange && reservation.getFieldNumber() == fieldNumber) {
-                    reservedKeys.add(date.format(formatter) + " " + reservation.getTime());
+                    reservedKeys.addAll(toVisibleSlotKeys(reservation, formatter));
                 }
             }
         }
 
         return reservedKeys;
+    }
+
+    private boolean overlapsTemporaryReservation(LocalDate date, String time, int fieldNumber) {
+        TimeRange requestedRange = parseTimeRange(time);
+        if (requestedRange == null) {
+            return false;
+        }
+
+        return temporaryReservations.values().stream()
+                .flatMap(List::stream)
+                .filter(reservation -> reservation.getFieldNumber() == fieldNumber && reservation.getDate().equals(date))
+                .map(reservation -> parseTimeRange(reservation.getTime()))
+                .filter(Objects::nonNull)
+                .anyMatch(requestedRange::overlaps);
+    }
+
+    private List<String> toVisibleSlotKeys(TemporaryReservation reservation, DateTimeFormatter formatter) {
+        TimeRange reservationRange = parseTimeRange(reservation.getTime());
+        String day = reservation.getDate().format(formatter);
+        if (reservationRange == null) {
+            return List.of(day + " " + reservation.getTime());
+        }
+
+        List<String> keys = new ArrayList<>();
+        LocalTime cursor = LocalTime.of(8, 0);
+        LocalTime scheduleEnd = LocalTime.of(20, 0);
+        while (cursor.isBefore(scheduleEnd)) {
+            LocalTime next = cursor.plusHours(1);
+            TimeRange visibleSlot = new TimeRange(cursor, next);
+            if (visibleSlot.overlaps(reservationRange)) {
+                keys.add(day + " " + cursor + " - " + next);
+            }
+            cursor = next;
+        }
+        return keys;
+    }
+
+    private TimeRange parseTimeRange(String value) {
+        if (value == null || !value.contains(" - ")) {
+            return null;
+        }
+
+        try {
+            String[] parts = value.split(" - ");
+            LocalTime start = LocalTime.parse(parts[0]);
+            LocalTime end = LocalTime.parse(parts[1]);
+            if (!start.isBefore(end)) {
+                return null;
+            }
+            return new TimeRange(start, end);
+        } catch (RuntimeException exception) {
+            return null;
+        }
+    }
+
+    private record TimeRange(LocalTime start, LocalTime end) {
+        boolean overlaps(TimeRange other) {
+            return start.isBefore(other.end) && other.start.isBefore(end);
+        }
     }
 }

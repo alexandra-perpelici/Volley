@@ -70,10 +70,10 @@ public class PushNotificationService {
 
     public void sendTestToUser(User user) {
         if (!isConfigured()) {
-            throw new IllegalStateException("Push notifications are not configured.");
+            throw new IllegalStateException("Notificarile push nu sunt configurate.");
         }
 
-        String payload = toJson("Volley alerts are enabled", "You will get notified when a new court reservation is created.", "/admin", "volley-test");
+        String payload = toJson("Alertele Riviera sunt active", "Vei primi notificari cand apare o rezervare noua.", "/admin", "volley-test");
         subscriptionRepository.findByActiveTrueAndUser(user)
                 .forEach(subscription -> sendToSubscription(subscription, payload));
     }
@@ -90,18 +90,18 @@ public class PushNotificationService {
             return;
         }
 
-        String payload = toJson("New court reservation", buildReservationBody(event), "/admin", "reservation-" + System.currentTimeMillis());
+        String payload = toJson("Rezervare noua", buildReservationBody(event), "/admin", "reservation-" + System.currentTimeMillis());
         adminSubscriptions.forEach(subscription -> sendToSubscription(subscription, payload));
     }
 
     private String buildReservationBody(ReservationNotificationEvent event) {
         if (event.slots().size() == 1) {
             ReservationNotificationEvent.ReservationNotificationSlot slot = event.slots().getFirst();
-            return event.username() + " reserved Court " + slot.fieldNumber() + " on "
+            return event.username() + " a rezervat Riviera " + slot.fieldNumber() + " pe "
                     + slot.date().format(DateTimeFormatter.ofPattern("dd MMM yyyy")) + ", " + slot.time() + ".";
         }
 
-        return event.username() + " reserved " + event.slots().size() + " slots for " + event.amountLei() + " lei.";
+        return event.username() + " a rezervat " + event.slots().size() + " intervale pentru " + event.amountLei() + " RON.";
     }
 
     private String toJson(String title, String body, String url, String tag) {
@@ -114,7 +114,7 @@ public class PushNotificationService {
         try {
             return objectMapper.writeValueAsString(payload);
         } catch (JsonProcessingException exception) {
-            throw new IllegalStateException("Could not create push payload.", exception);
+            throw new IllegalStateException("Nu s-a putut crea notificarea push.", exception);
         }
     }
 

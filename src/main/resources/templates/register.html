@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0f5258">
-    <title>Register</title>
+    <meta name="theme-color" content="#087b93">
+    <title>Creeaza cont</title>
     <link rel="manifest" th:href="@{/manifest.webmanifest}">
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,8 +15,8 @@
 <main class="auth-page">
     <section class="card shadow auth-card" id="registerCard" aria-labelledby="registerTitle">
         <div class="auth-card-body">
-            <p class="eyebrow text-center">Create account</p>
-            <h1 class="auth-title card-title" id="registerTitle">Join the Beach Court</h1>
+            <p class="eyebrow text-center">Cont nou</p>
+            <h1 class="auth-title card-title" id="registerTitle">Creeaza cont Riviera</h1>
 
             <form th:action="@{/register}"
                   th:object="${registrationRequest}"
@@ -25,7 +25,7 @@
                   id="registerForm">
 
                 <div class="mb-3">
-                    <label class="form-label" for="usernameInput">Username</label>
+                    <label class="form-label" for="usernameInput">Utilizator</label>
                     <input
                             type="text"
                             id="usernameInput"
@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="passwordInput">Password</label>
+                    <label class="form-label" for="passwordInput">Parola</label>
                     <input
                             type="password"
                             id="passwordInput"
@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="confirmPasswordInput">Confirm Password</label>
+                    <label class="form-label" for="confirmPasswordInput">Confirma parola</label>
                     <input
                             type="password"
                             id="confirmPasswordInput"
@@ -71,7 +71,7 @@
                 <button type="submit"
                         class="btn btn-success"
                         id="registerButton">
-                    Register
+                    Creeaza cont
                 </button>
             </form>
 
@@ -92,7 +92,7 @@
                 <button type="submit"
                         class="btn btn-secondary"
                         id="backToLoginButton">
-                    Back to Login
+                    Inapoi la autentificare
                 </button>
             </form>
         </div>

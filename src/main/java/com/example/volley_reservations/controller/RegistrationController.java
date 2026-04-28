@@ -31,7 +31,7 @@ public class RegistrationController {
 
         String resultMessage = userService.registerUser(request);
 
-        if(resultMessage.equals("User registered successfully")) {
+        if(resultMessage.equals("Cont creat cu succes")) {
             redirectAttributes.addFlashAttribute("successMessage", resultMessage);
             return "redirect:/login";
         } else {

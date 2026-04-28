@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0f5258">
-    <title>Court 1 Reservations</title>
+    <meta name="theme-color" content="#087b93">
+    <title>Riviera 1</title>
     <link rel="manifest" th:href="@{/manifest.webmanifest}">
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link th:href="@{/css/site.css(v='booking-ui-4')}" rel="stylesheet">
+    <link th:href="@{/css/site.css(v='booking-ui-9')}" rel="stylesheet">
 </head>
-<body class="bg-light schedule-page court-page">
+<body class="bg-light schedule-page court-page court-one">
 
 <div class="booking-layout">
-    <aside class="booking-sidebar" aria-label="Main navigation">
+    <aside class="booking-sidebar" aria-label="Navigatie principala">
         <a class="brand-lockup" th:href="@{/home}">
             <span class="brand-mark">VB</span>
-            <span>VolleyBook</span>
+            <span>Riviera</span>
         </a>
         <nav class="booking-nav">
-            <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
-            <a th:href="@{/field/1}" th:classappend="${fieldNumber == 1} ? ' active'"><i class="bi bi-calendar2-week"></i><span>Court 1</span></a>
-            <a th:href="@{/field/2}" th:classappend="${fieldNumber == 2} ? ' active'"><i class="bi bi-calendar2-week"></i><span>Court 2</span></a>
-            <a th:href="@{/cart/view(fieldNumber=${fieldNumber})}"><i class="bi bi-bag-check"></i><span>Cart</span></a>
-            <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a>
+            <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Rezerva</span></a>
+            <a th:href="@{/field/1}" th:classappend="${fieldNumber == 1} ? ' active'"><i class="bi bi-calendar2-week"></i><span>Riviera 1</span></a>
+            <a th:href="@{/field/2}" th:classappend="${fieldNumber == 2} ? ' active'"><i class="bi bi-calendar2-week"></i><span>Riviera 2</span></a>
+            <a th:href="@{/cart/view(fieldNumber=${fieldNumber})}"><i class="bi bi-bag-check"></i><span>Cos</span></a>
+            <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profil</span></a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"><i class="bi bi-speedometer2"></i><span>Admin</span></a>
         </nav>
         <form th:action="@{/logout}" method="post" class="sidebar-logout">
-            <button type="submit"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button>
+            <button type="submit"><i class="bi bi-box-arrow-left"></i><span>Iesire</span></button>
         </form>
     </aside>
 
@@ -36,28 +36,31 @@
         <header class="court-header">
             <div>
                 <div class="mobile-back-row">
-                    <a th:href="@{/home}" aria-label="Back to home">&larr;</a>
-                    <span>VolleyBook</span>
+                    <a th:href="@{/home}" aria-label="Inapoi la start">&larr;</a>
+                    <span>Alege ora</span>
                 </div>
-                <p class="eyebrow">Court <span th:text="${fieldNumber}">1</span></p>
-                <h1>Court <span th:text="${fieldNumber}">1</span></h1>
-                <div class="court-meta" aria-label="Court details">
-                    <span>Indoor</span>
-                    <span>Volleyball</span>
-                    <span>90 minute slots</span>
-                    <span>20 lei / slot</span>
+                <p class="eyebrow">Teren</p>
+                <h1 th:text="${'Riviera ' + fieldNumber}">Riviera 1</h1>
+                <div class="court-meta" aria-label="Detalii teren">
+                    <span>1 ora</span>
+                    <span th:text="${pricePerHour + ' RON / ora'}">40 RON / ora</span>
                 </div>
             </div>
             <div class="court-header-actions">
                 <form th:action="@{/home}" method="get">
-                    <button type="submit" class="btn btn-secondary">Dashboard</button>
+                    <button type="submit" class="btn btn-secondary">Start</button>
                 </form>
                 <form th:action="@{/cart/view}" method="get">
                     <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
-                    <button type="submit" class="btn btn-success">My Cart</button>
+                    <button type="submit" class="btn btn-success">Cos</button>
                 </form>
             </div>
         </header>
+
+        <nav class="court-switcher" aria-label="Alege teren">
+            <a th:href="@{/field/1}" th:classappend="${fieldNumber == 1} ? ' active'">Riviera 1</a>
+            <a th:href="@{/field/2}" th:classappend="${fieldNumber == 2} ? ' active'">Riviera 2</a>
+        </nav>
 
         <div th:if="${message}" class="alert alert-success">
             <p th:text="${message}"></p>
@@ -65,14 +68,14 @@
 
         <section class="booking-workspace">
             <div class="schedule-card-ui">
-                <div class="day-strip" aria-label="Choose a day">
+                <div class="day-strip" aria-label="Alege ziua">
                     <button type="button"
                             class="day-tab"
                             th:each="day, dayStat : ${days}"
                             th:classappend="${dayStat.first} ? ' active'"
                             th:attr="data-day-index=${dayStat.index}">
-                        <span class="day-tab-name" th:text="${dayStat.first ? 'Today' : #temporals.format(day, 'EEE')}">Today</span>
-                        <span class="day-tab-date" th:text="${#temporals.format(day, 'MMM dd')}">May 20</span>
+                        <span class="day-tab-name" th:text="${dayLabels[#temporals.format(day,'yyyy-MM-dd')]}">Azi</span>
+                        <span class="day-tab-date" th:text="${dayDateLabels[#temporals.format(day,'yyyy-MM-dd')]}">28 apr</span>
                     </button>
                 </div>
 
@@ -83,8 +86,8 @@
                          th:attr="data-day-index=${dayStat.index}">
                         <section class="slot-period" th:each="group : ${timeSlotGroups}" th:if="${!group.slots().isEmpty()}">
                             <header class="slot-period-header">
-                                <h2 th:text="${group.label()}">Morning</h2>
-                                <span th:text="${group.window()}">08:00 - 12:30</span>
+                                <h2 th:text="${group.label()}">Dimineata</h2>
+                                <span th:text="${group.window()}">08:00 - 12:00</span>
                             </header>
                             <div class="slot-card-grid">
                                 <button type="button"
@@ -100,8 +103,8 @@
                                                  data-field=${fieldNumber},
                                                  data-key=${matrixKey},
                                                  data-selected=${isSelected}">
-                                    <span class="slot-time" th:text="${timeSlot}">08:00 - 09:30</span>
-                                    <span class="slot-status" th:text="${isSelected} ? 'Selected' : (${isReserved} ? 'Reserved' : 'Available')">Available</span>
+                                    <span class="slot-time" th:text="${timeSlot}">08:00 - 09:00</span>
+                                    <span class="slot-status" th:text="${isSelected} ? 'Selectata' : (${isReserved} ? 'Ocupata' : 'Libera')">Libera</span>
                                 </button>
                             </div>
                         </section>
@@ -109,37 +112,37 @@
                 </div>
             </div>
 
-            <aside class="cart-rail" aria-label="Selected reservations">
+            <aside class="cart-rail" aria-label="Rezervari selectate">
                 <div class="cart-rail-header">
                     <div>
-                        <p class="eyebrow">Cart</p>
-                        <h2>Selected</h2>
+                        <p class="eyebrow">Cos</p>
+                        <h2>Selectate</h2>
                     </div>
-                    <strong th:text="${selectedCount} + ' items'">0 items</strong>
+                    <strong th:text="${selectedCount} + ' selectate'">0 selectate</strong>
                 </div>
 
                 <div th:if="${cart.isEmpty()}" class="empty-cart-note">
-                    Tap an available slot to add it here.
+                    Apasa pe o ora libera ca sa o adaugi.
                 </div>
 
                 <div th:if="${!cart.isEmpty()}" class="cart-line-list">
                     <div class="cart-line" th:each="res : ${cart}">
                         <div>
-                            <strong th:text="${res.time}">08:00 - 09:30</strong>
-                            <span th:text="${#temporals.format(res.date, 'dd MMM yyyy') + ' - Court ' + res.fieldNumber}">20 May - Court 1</span>
+                            <strong th:text="${res.time}">08:00 - 09:00</strong>
+                            <span th:text="${#temporals.format(res.date, 'dd MMM yyyy') + ' - Riviera ' + res.fieldNumber}">20 May - Riviera 1</span>
                         </div>
-                        <span>20 lei</span>
+                        <span th:text="${slotPrice + ' RON'}">40 RON</span>
                     </div>
                 </div>
 
                 <div class="cart-rail-total">
                     <span>Total</span>
-                    <strong th:text="${selectedTotal} + ' lei'">0 lei</strong>
+                    <strong th:text="${selectedTotal + ' RON'}">0 RON</strong>
                 </div>
 
                 <form th:action="@{/cart/view}" method="get">
                     <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
-                    <button type="submit" class="btn btn-success btn-lg w-100">Go to Cart</button>
+                    <button type="submit" class="btn btn-success btn-lg w-100">Mergi la cos</button>
                 </form>
             </aside>
         </section>
@@ -148,23 +151,21 @@
 
 <div class="mobile-cart-bar">
     <div>
-        <strong>Selected</strong>
-        <span th:text="${selectedCount + ' items - ' + selectedTotal + ' lei'}">0 items - 0 lei</span>
+        <strong>Selectate</strong>
+        <span th:text="${selectedCount + ' selectate - ' + selectedTotal + ' RON'}">0 selectate - 0 RON</span>
     </div>
     <form th:action="@{/cart/view}" method="get">
         <input type="hidden" name="fieldNumber" th:value="${fieldNumber}">
-        <button type="submit">Cart</button>
+        <button type="submit">Cos</button>
     </form>
 </div>
 
-<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-    <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Home</span></a>
-    <a th:href="@{/field/1}" class="active"><i class="bi bi-calendar2-week-fill"></i><span>Courts</span></a>
-    <a th:href="@{/cart/view(fieldNumber=${fieldNumber})}"><i class="bi bi-bag-check"></i><span>Cart</span></a>
-    <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a>
+<nav class="mobile-bottom-nav" aria-label="Navigatie mobila">
+    <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Start</span></a>
+    <a th:href="@{/field/1}" class="active"><i class="bi bi-calendar2-week-fill"></i><span>Terenuri</span></a>
+    <a th:href="@{/cart/view(fieldNumber=${fieldNumber})}"><i class="bi bi-bag-check"></i><span>Cos</span></a>
+    <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profil</span></a>
 </nav>
-
-<div id="popupOverlay"></div>
 
 <form id="addToCartForm" th:action="@{/cart/add}" method="post" style="display:none;">
     <input type="hidden" name="reservationDate" id="cartReservationDate">
@@ -172,20 +173,9 @@
     <input type="hidden" name="fieldNumber" id="cartFieldNumber">
 </form>
 
-<div id="reservationPopup" role="dialog" aria-modal="true" aria-labelledby="reservationPopupTitle">
-    <p class="eyebrow">Reservation</p>
-    <h3 id="reservationPopupTitle">Add Slot</h3>
-    <p id="popupSlot" class="slot-summary"></p>
-    <p class="mb-3"><strong>Price:</strong> 20 lei</p>
-    <div class="modal-actions">
-        <button id="popupYesBtn" class="btn btn-success" type="button">Add to cart</button>
-        <button id="popupNoBtn" class="btn btn-danger" type="button">Cancel</button>
-    </div>
-</div>
-
 <div id="toast"></div>
 
-<script th:src="@{/js/field-schedule.js}"></script>
+<script th:src="@{/js/field-schedule.js(v='booking-ui-9')}"></script>
 <script th:src="@{/js/navigation-cache.js(v='2')}"></script>
 
 </body>

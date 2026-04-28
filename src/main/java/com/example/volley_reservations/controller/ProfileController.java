@@ -4,6 +4,7 @@ import com.example.volley_reservations.model.Reservation;
 import com.example.volley_reservations.model.TemporaryReservation;
 import com.example.volley_reservations.repository.ReservationRepository;
 import com.example.volley_reservations.security.CustomUserDetails;
+import com.example.volley_reservations.service.BookingPricing;
 import com.example.volley_reservations.service.TemporaryReservationService;
 import com.example.volley_reservations.service.UserBlacklistService;
 import org.springframework.security.core.Authentication;
@@ -55,7 +56,9 @@ public class ProfileController {
         model.addAttribute("reservationCount", reservations.size());
         model.addAttribute("upcomingCount", upcomingReservations.size());
         model.addAttribute("selectedCount", cart.size());
-        model.addAttribute("selectedTotal", cart.size() * 20);
+        model.addAttribute("selectedTotal", BookingPricing.totalPriceRon(cart));
+        model.addAttribute("slotPrice", BookingPricing.defaultSlotPriceRon());
+        model.addAttribute("pricePerHour", BookingPricing.PRICE_PER_HOUR_RON);
         model.addAttribute("activeBlacklist", blacklistService.findActiveForUserId(userId).orElse(null));
         return "profile";
     }

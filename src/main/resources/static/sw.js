@@ -1,9 +1,11 @@
-const APP_SHELL_CACHE = "volley-shell-v1";
+const APP_SHELL_CACHE = "volley-shell-v3";
 
 self.addEventListener("install", event => {
     event.waitUntil(
         caches.open(APP_SHELL_CACHE).then(cache => cache.addAll([
             "/css/site.css",
+            "/img/riviera-1-toon.png",
+            "/img/riviera-2-toon.png",
             "/img/icons/icon-192.png",
             "/img/icons/icon-512.png"
         ]))
@@ -36,9 +38,9 @@ self.addEventListener("push", event => {
         }
     }
 
-    const title = payload.title || "Volley Reservations";
+    const title = payload.title || "Rezervari Riviera";
     const options = {
-        body: payload.body || "New reservation activity.",
+        body: payload.body || "Activitate noua la rezervari.",
         icon: "/img/icons/icon-192.png",
         badge: "/img/icons/icon-192.png",
         tag: payload.tag || "volley-reservation",
