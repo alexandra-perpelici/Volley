@@ -35,6 +35,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     @EntityGraph(attributePaths = {"user", "payment"})
     @Query("SELECT r FROM Reservation r " +
+            "WHERE r.reservation_date = :date " +
+            "AND r.status <> 'CANCELLED' " +
+            "ORDER BY r.reservation_time ASC, r.field_number ASC")
+    List<Reservation> findAdminReservationsForDate(@Param("date") LocalDate date);
+
+    @EntityGraph(attributePaths = {"user", "payment"})
+    @Query("SELECT r FROM Reservation r " +
             "WHERE r.user.user_id = :userId " +
             "ORDER BY r.reservation_date DESC, r.reservation_time ASC")
     List<Reservation> findAdminReservationsForUser(@Param("userId") Integer userId);

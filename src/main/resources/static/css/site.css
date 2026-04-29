@@ -371,6 +371,326 @@ body.bg-light {
     }
 }
 
+/* Login refresh */
+.login-page {
+    background:
+        linear-gradient(180deg, rgba(197, 236, 248, 0.72), rgba(255, 248, 236, 0.96) 52%, rgba(244, 251, 245, 1)),
+        linear-gradient(120deg, rgba(8, 123, 147, 0.18), rgba(47, 143, 91, 0.16)),
+        url("/img/riviera-1-toon.png") center / cover fixed;
+}
+
+.login-page .auth-page {
+    min-height: 100vh;
+    place-items: center;
+    padding: 32px 18px;
+}
+
+.auth-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 1fr) minmax(360px, 430px);
+    width: min(100%, 980px);
+    min-height: 560px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    background: rgba(255, 252, 244, 0.96);
+    box-shadow: 0 24px 70px rgba(8, 92, 112, 0.18);
+    overflow: hidden;
+}
+
+.auth-visual {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 560px;
+    padding: 28px;
+    color: #fff;
+    background:
+        linear-gradient(180deg, rgba(8, 70, 86, 0.16), rgba(8, 70, 86, 0.66)),
+        url("/img/riviera-2-toon.png") center 58% / cover;
+}
+
+.auth-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(8, 70, 86, 0.24), rgba(8, 70, 86, 0));
+    pointer-events: none;
+}
+
+.auth-brand,
+.auth-visual-copy {
+    position: relative;
+    z-index: 1;
+}
+
+.auth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-weight: 900;
+}
+
+.auth-visual-copy {
+    max-width: 360px;
+}
+
+.auth-visual-copy .eyebrow,
+.auth-visual-copy h2 {
+    color: #fff;
+}
+
+.auth-visual-copy h2 {
+    margin: 0 0 16px;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.02;
+}
+
+.auth-visual-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.auth-visual-meta span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0.42rem 0.68rem;
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    border-radius: 8px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.86);
+    font-size: 0.86rem;
+    font-weight: 900;
+}
+
+.login-page .auth-card {
+    width: auto;
+    border: 0;
+    border-radius: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 248, 236, 0.98));
+    box-shadow: none !important;
+}
+
+.login-page .auth-card::before {
+    display: none;
+}
+
+.login-page .auth-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    padding: clamp(28px, 4vw, 44px);
+}
+
+.login-page .auth-card .eyebrow,
+.login-page .auth-title {
+    text-align: left;
+}
+
+.login-page .auth-title {
+    max-width: 340px;
+    margin-bottom: 26px;
+    font-size: clamp(2rem, 3vw, 2.6rem);
+}
+
+.login-page .form-label {
+    color: var(--ink);
+    font-weight: 900;
+}
+
+.login-page .form-control {
+    min-height: 52px;
+    border-color: rgba(8, 123, 147, 0.2);
+    border-radius: 8px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
+}
+
+.login-page .form-control:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 0.2rem rgba(22, 154, 194, 0.18);
+}
+
+.login-page .auth-card .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+}
+
+.login-page .auth-card .alert p {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .login-page {
+        background:
+            linear-gradient(180deg, rgba(197, 236, 248, 0.74), rgba(255, 248, 236, 1) 46%, rgba(244, 251, 245, 1));
+    }
+
+    .login-page .auth-page {
+        align-items: start;
+        padding: 16px;
+    }
+
+    .auth-layout {
+        grid-template-columns: 1fr;
+        width: 100%;
+        min-height: 0;
+    }
+
+    .auth-visual {
+        min-height: 190px;
+        padding: 18px;
+        background-position: center 56%;
+    }
+
+    .auth-visual-copy {
+        max-width: 280px;
+    }
+
+    .auth-visual-copy h2 {
+        margin-bottom: 10px;
+        font-size: 1.6rem;
+    }
+
+    .auth-visual-meta span {
+        min-height: 30px;
+        padding: 0.32rem 0.52rem;
+        font-size: 0.76rem;
+    }
+
+    .login-page .auth-card-body {
+        padding: 24px;
+    }
+
+    .login-page .auth-title {
+        margin-bottom: 22px;
+        font-size: 2rem;
+    }
+}
+
+/* Register refresh */
+.register-page {
+    background:
+        linear-gradient(180deg, rgba(197, 236, 248, 0.72), rgba(255, 248, 236, 0.96) 52%, rgba(244, 251, 245, 1)),
+        linear-gradient(120deg, rgba(8, 123, 147, 0.18), rgba(47, 143, 91, 0.16));
+}
+
+.register-page .auth-page {
+    min-height: 100vh;
+    place-items: center;
+    padding: 32px 18px;
+}
+
+.register-page .auth-layout,
+.register-page .auth-visual {
+    min-height: 620px;
+}
+
+.register-page .auth-visual {
+    background:
+        linear-gradient(180deg, rgba(8, 70, 86, 0.16), rgba(8, 70, 86, 0.66)),
+        url("/img/riviera-1-toon.png") center 58% / cover;
+}
+
+.register-page .auth-card {
+    width: auto;
+    border: 0;
+    border-radius: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 248, 236, 0.98));
+    box-shadow: none !important;
+}
+
+.register-page .auth-card::before {
+    display: none;
+}
+
+.register-page .auth-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    padding: clamp(28px, 4vw, 44px);
+}
+
+.register-page .auth-card .eyebrow,
+.register-page .auth-title {
+    text-align: left;
+}
+
+.register-page .auth-title {
+    max-width: 340px;
+    margin-bottom: 26px;
+    font-size: clamp(2rem, 3vw, 2.6rem);
+}
+
+.register-page .form-label {
+    color: var(--ink);
+    font-weight: 900;
+}
+
+.register-page .form-control {
+    min-height: 52px;
+    border-color: rgba(8, 123, 147, 0.2);
+    border-radius: 8px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
+}
+
+.register-page .form-control:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 0.2rem rgba(22, 154, 194, 0.18);
+}
+
+.register-page .auth-card .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+}
+
+@media (max-width: 768px) {
+    .register-page {
+        background:
+            linear-gradient(180deg, rgba(197, 236, 248, 0.74), rgba(255, 248, 236, 1) 46%, rgba(244, 251, 245, 1));
+    }
+
+    .register-page .auth-page {
+        align-items: start;
+        padding: 16px;
+    }
+
+    .register-page .auth-layout {
+        grid-template-columns: 1fr;
+        width: 100%;
+        min-height: 0;
+    }
+
+    .register-page .auth-visual {
+        min-height: 200px;
+        padding: 18px;
+        background-position: center 56%;
+    }
+
+    .register-page .auth-card-body {
+        padding: 24px;
+    }
+
+    .register-page .auth-title {
+        margin-bottom: 22px;
+        font-size: 2rem;
+    }
+}
+
 .push-status {
     display: inline-flex;
     align-items: center;
@@ -3004,7 +3324,8 @@ legend {
         left: 10px;
         z-index: 1040;
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(0, 1fr);
         min-height: 66px;
         padding: 8px;
         border: 1px solid rgba(255, 255, 255, 0.68);
@@ -3018,9 +3339,10 @@ legend {
         display: grid;
         place-items: center;
         gap: 3px;
+        min-width: 0;
         border-radius: 14px;
         color: var(--muted);
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         font-weight: 900;
         text-decoration: none;
     }
@@ -3108,6 +3430,21 @@ legend {
 .profile-stat span {
     color: var(--muted);
     font-weight: 800;
+}
+
+.profile-logout-form {
+    display: flex;
+    grid-column: 2 / -1;
+    justify-content: flex-end;
+    margin: 0;
+}
+
+.profile-logout-form .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
 }
 
 .reservations-panel,
@@ -3270,6 +3607,15 @@ legend {
         gap: 8px;
     }
 
+    .profile-logout-form {
+        grid-column: 1 / -1;
+        justify-content: stretch;
+    }
+
+    .profile-logout-form .btn {
+        width: 100%;
+    }
+
     .profile-stat {
         min-height: 62px;
         padding: 10px;
@@ -3367,19 +3713,13 @@ legend {
 }
 
 @media (max-width: 768px) {
-    body.dashboard-page .mobile-bottom-nav,
-    body.court-page .mobile-bottom-nav,
-    body.checkout-page .mobile-bottom-nav {
-        display: none !important;
-    }
-
     body.dashboard-page .booking-main,
     body.checkout-page .booking-main {
-        padding-bottom: 24px;
+        padding-bottom: 104px;
     }
 
     body.court-page .booking-main {
-        padding-bottom: 110px;
+        padding-bottom: 178px;
     }
 
     .dashboard-page .court-header,
@@ -3423,7 +3763,7 @@ legend {
 
     .dashboard-page .dashboard-workspace,
     .checkout-page .checkout-workspace {
-        padding: 12px 14px 24px;
+        padding: 12px 14px 104px;
     }
 
     .dashboard-page .dashboard-hero-panel {
@@ -3496,7 +3836,7 @@ legend {
     }
 
     .court-page .day-panels {
-        padding: 14px 12px 116px !important;
+        padding: 14px 12px 184px !important;
     }
 
     .court-page .slot-period + .slot-period {
@@ -3532,7 +3872,7 @@ legend {
 
     .court-page .mobile-cart-bar {
         right: 12px;
-        bottom: 12px;
+        bottom: 84px;
         left: 12px;
         min-height: 64px;
         padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
@@ -3803,5 +4143,325 @@ body.bg-light {
 
     .dashboard-court-card::before {
         height: 86px;
+    }
+}
+
+/* Final auth/admin overrides */
+body.bg-light.register-page {
+    background:
+        linear-gradient(180deg, rgba(197, 236, 248, 0.72), rgba(255, 248, 236, 0.96) 52%, rgba(244, 251, 245, 1)),
+        linear-gradient(120deg, rgba(8, 123, 147, 0.18), rgba(47, 143, 91, 0.16));
+}
+
+/* Simple admin cash desk */
+.admin-page .booking-layout {
+    background: rgba(255, 252, 244, 0.97);
+}
+
+.admin-main {
+    gap: 18px;
+}
+
+.admin-cash-header {
+    background:
+        linear-gradient(135deg, rgba(8, 123, 147, 0.94), rgba(47, 143, 91, 0.78)),
+        url("/img/riviera-2-toon.png") center 58% / cover;
+}
+
+.admin-cash-header .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-alert {
+    margin: 0;
+}
+
+.admin-alert p {
+    margin: 0;
+}
+
+.admin-day-tools {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+}
+
+.admin-day-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 2px 8px;
+    scrollbar-width: none;
+}
+
+.admin-day-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.admin-day-strip a {
+    display: grid;
+    place-items: center;
+    flex: 0 0 92px;
+    min-height: 58px;
+    padding: 0.52rem;
+    border: 1px solid rgba(8, 123, 147, 0.14);
+    border-radius: 8px;
+    color: var(--teal-dark);
+    background: #fffdfa;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.admin-day-strip a span {
+    color: inherit;
+    font-size: 0.82rem;
+}
+
+.admin-day-strip a strong {
+    color: inherit;
+    font-size: 0.98rem;
+    line-height: 1;
+}
+
+.admin-day-strip a.active {
+    color: #fff;
+    border-color: var(--teal-dark);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-date-form {
+    display: flex;
+    align-items: end;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid rgba(8, 123, 147, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.admin-date-form label {
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.admin-date-form .form-control {
+    min-height: 42px;
+    border-color: rgba(8, 123, 147, 0.18);
+    border-radius: 8px;
+    color: var(--ink);
+    font-weight: 800;
+}
+
+.admin-cash-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.admin-cash-stat {
+    min-height: 104px;
+    padding: 18px;
+    border: 1px solid rgba(8, 123, 147, 0.13);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-cash-stat span {
+    color: var(--muted);
+    font-size: 0.84rem;
+    font-weight: 900;
+}
+
+.admin-cash-stat strong {
+    display: block;
+    margin-top: 12px;
+    color: var(--ink);
+    font-size: 1.9rem;
+    line-height: 1;
+}
+
+.admin-cash-stat.paid {
+    background: linear-gradient(180deg, rgba(217, 244, 223, 0.98), rgba(255, 255, 255, 0.94));
+}
+
+.admin-reservations-panel {
+    display: grid;
+    gap: 14px;
+    padding: 22px;
+    border: 1px solid rgba(8, 123, 147, 0.13);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-empty-state {
+    display: grid;
+    place-items: center;
+    min-height: 260px;
+    padding: 28px;
+    border: 1px dashed rgba(8, 123, 147, 0.22);
+    border-radius: 8px;
+    background: #f4fbf5;
+    text-align: center;
+}
+
+.admin-empty-state i {
+    color: var(--teal-dark);
+    font-size: 2.3rem;
+}
+
+.admin-empty-state h3,
+.admin-empty-state p {
+    margin: 0;
+}
+
+.admin-reservation-list {
+    display: grid;
+    gap: 10px;
+}
+
+.admin-reservation-card {
+    display: grid;
+    grid-template-columns: minmax(150px, 1.1fr) minmax(170px, 1fr) minmax(130px, 0.7fr) minmax(190px, auto);
+    gap: 14px;
+    align-items: center;
+    min-height: 88px;
+    padding: 14px;
+    border: 1px solid rgba(47, 143, 91, 0.24);
+    border-radius: 8px;
+    background: linear-gradient(180deg, #ffffff, #f4fbf5);
+}
+
+.admin-reservation-card.paid {
+    border-color: rgba(8, 123, 147, 0.16);
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.admin-reservation-time,
+.admin-reservation-user,
+.admin-reservation-price {
+    display: grid;
+    gap: 4px;
+}
+
+.admin-reservation-time strong,
+.admin-reservation-user strong {
+    color: var(--ink);
+    font-size: 1.08rem;
+}
+
+.admin-reservation-time span,
+.admin-reservation-user span {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.admin-reservation-price span {
+    color: var(--teal-dark);
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+
+.admin-reservation-price strong {
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.admin-reservation-action {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.admin-reservation-action form {
+    margin: 0;
+}
+
+.admin-reservation-action .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    white-space: nowrap;
+}
+
+.admin-paid-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 0.48rem 0.74rem;
+    border: 1px solid rgba(47, 143, 91, 0.24);
+    border-radius: 999px;
+    color: #247346;
+    background: rgba(217, 244, 223, 0.96);
+    font-size: 0.86rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+    .admin-day-tools,
+    .admin-cash-grid,
+    .admin-reservation-card {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-date-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-reservation-action {
+        justify-content: stretch;
+    }
+
+    .admin-reservation-action .btn,
+    .admin-reservation-action form,
+    .admin-paid-pill {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-page .booking-main {
+        padding-bottom: 104px;
+    }
+
+    .admin-page .court-header-actions {
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-page .court-header-actions form,
+    .admin-page .court-header-actions .btn,
+    .admin-page .court-header-actions .push-status {
+        width: 100%;
+    }
+
+    .admin-day-tools {
+        padding: 0 12px;
+    }
+
+    .admin-cash-grid,
+    .admin-reservations-panel {
+        margin: 0 12px;
+    }
+
+    .admin-reservations-panel {
+        padding: 16px;
+    }
+
+    .admin-reservation-card {
+        gap: 12px;
+        min-height: 0;
     }
 }

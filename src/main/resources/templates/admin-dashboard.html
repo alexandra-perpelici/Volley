@@ -8,235 +8,168 @@
     <link rel="manifest" th:href="@{/manifest.webmanifest}">
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link th:href="@{/css/site.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link th:href="@{/css/site.css(v='booking-ui-14')}" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="bg-light schedule-page admin-page">
 
-<main class="container py-4 app-shell admin-shell">
-    <header class="app-topbar admin-topbar">
-        <div>
-            <p class="eyebrow">Admin</p>
-            <h1 class="mb-0">Panou administrare</h1>
-            <p class="lead-copy">Urmareste utilizatorii, rezervarile, platile, neprezentarile si restrictiile temporare.</p>
+<div class="booking-layout admin-layout">
+    <aside class="booking-sidebar" aria-label="Navigatie admin">
+        <a class="brand-lockup" th:href="@{/admin}">
+            <span class="brand-mark">VB</span>
+            <span>Riviera</span>
+        </a>
+        <nav class="booking-nav">
+            <a th:href="@{/admin}" class="active"><i class="bi bi-cash-coin"></i><span>Admin</span></a>
+            <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Rezervari</span></a>
+        </nav>
+        <form th:action="@{/logout}" method="post" class="sidebar-logout">
+            <button type="submit"><i class="bi bi-box-arrow-left"></i><span>Iesire</span></button>
+        </form>
+    </aside>
+
+    <main class="booking-main admin-main">
+        <header class="court-header admin-cash-header">
+            <div>
+                <div class="mobile-back-row">
+                    <a th:href="@{/home}" aria-label="Inapoi la rezervari">&larr;</a>
+                    <span>Admin</span>
+                </div>
+                <p class="eyebrow">Admin</p>
+                <h1>Incasari teren</h1>
+                <div class="court-meta" aria-label="Rezumat zi">
+                    <span th:text="${reservationCount + ' rezervari'}">0 rezervari</span>
+                    <span th:text="${pendingCount + ' de incasat'}">0 de incasat</span>
+                    <span th:text="${paidTotal + ' RON incasati'}">0 RON incasati</span>
+                </div>
+            </div>
+            <div class="court-header-actions">
+                <button type="button" class="btn btn-secondary" data-pwa-install hidden>Instaleaza</button>
+                <button type="button" class="btn btn-secondary" data-push-subscribe hidden>Activeaza alerte</button>
+                <button type="button" class="btn btn-secondary" data-push-test hidden>Test alerta</button>
+                <span class="push-status" data-push-status aria-live="polite"></span>
+                <form th:action="@{/home}" method="get">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="bi bi-grid-1x2" aria-hidden="true"></i>
+                        <span>Rezervari</span>
+                    </button>
+                </form>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-left" aria-hidden="true"></i>
+                        <span>Iesire</span>
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <div th:if="${adminMessage}" class="alert alert-success admin-alert">
+            <p th:text="${adminMessage}"></p>
         </div>
-        <div class="topbar-actions">
-            <button type="button" class="btn btn-secondary" data-pwa-install hidden>Instaleaza</button>
-            <button type="button" class="btn btn-secondary" data-push-subscribe hidden>Activeaza alerte</button>
-            <button type="button" class="btn btn-secondary" data-push-test hidden>Test alerta</button>
-            <span class="push-status" data-push-status aria-live="polite"></span>
-            <form th:action="@{/home}" method="get">
-                <button type="submit" class="btn btn-secondary">Rezervari</button>
+
+        <section class="admin-day-tools" aria-label="Alege ziua">
+            <nav class="admin-day-strip">
+                <a th:each="day : ${adminDays}"
+                   th:href="@{/admin(date=${day.date})}"
+                   th:classappend="${day.selected} ? ' active'">
+                    <span th:text="${day.name}">Azi</span>
+                    <strong th:text="${day.label}">28.04</strong>
+                </a>
+            </nav>
+
+            <form th:action="@{/admin}" method="get" class="admin-date-form">
+                <label for="adminDateInput">Data</label>
+                <input id="adminDateInput" class="form-control" type="date" name="date" th:value="${selectedDateIso}">
+                <button type="submit" class="btn btn-secondary">Deschide</button>
             </form>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-outline-danger">Iesire</button>
-            </form>
-        </div>
-    </header>
+        </section>
 
-    <nav class="admin-nav" aria-label="Sectiuni admin">
-        <a href="#users">Utilizatori</a>
-        <a href="#reservations">Rezervari</a>
-        <a href="#blacklist">Restrictii</a>
-    </nav>
-
-    <div th:if="${adminMessage}" class="alert alert-success">
-        <p th:text="${adminMessage}"></p>
-    </div>
-
-    <section class="admin-kpi-grid" aria-label="Statistici">
-        <div class="admin-kpi">
-            <span>Utilizatori</span>
-            <strong th:text="${stats.totalUsers}">0</strong>
-        </div>
-        <div class="admin-kpi">
-            <span>Restrictii active</span>
-            <strong th:text="${stats.activeBlacklists}">0</strong>
-        </div>
-        <div class="admin-kpi">
-            <span>Rezervari azi</span>
-            <strong th:text="${stats.reservationsToday}">0</strong>
-        </div>
-        <div class="admin-kpi">
-            <span>Rezervari saptamana asta</span>
-            <strong th:text="${stats.reservationsThisWeek}">0</strong>
-        </div>
-        <div class="admin-kpi">
-            <span>Neprezentari luna asta</span>
-            <strong th:text="${stats.noShowsThisMonth}">0</strong>
-        </div>
-        <div class="admin-kpi">
-            <span>Plati in asteptare</span>
-            <strong th:text="${stats.pendingPayments}">0</strong>
-        </div>
-        <div class="admin-kpi admin-kpi-wide">
-            <span>Incasari confirmate</span>
-            <strong><span th:text="${stats.confirmedRevenueLei}">0</span> RON</strong>
-        </div>
-    </section>
-
-    <section class="admin-section" id="users">
-        <div class="admin-section-heading">
-            <div>
-                <p class="eyebrow">Utilizatori</p>
-                <h2>Conturi si istoric rezervari</h2>
+        <section class="admin-cash-grid" aria-label="Rezumat incasari">
+            <div class="admin-cash-stat">
+                <span>Rezervari</span>
+                <strong th:text="${reservationCount}">0</strong>
             </div>
-            <span class="price-pill" th:text="${users.size()} + ' utilizatori'">0 utilizatori</span>
-        </div>
-
-        <div class="table-responsive admin-table-wrap">
-            <table class="table table-bordered table-hover align-middle admin-table">
-                <thead class="table-dark">
-                <tr>
-                    <th>Utilizator</th>
-                    <th>Role</th>
-                    <th>Activ</th>
-                    <th>Total rezervari</th>
-                    <th>Viitoare</th>
-                    <th>Neprezentari</th>
-                    <th>Restrictie</th>
-                    <th>Actiuni</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="summary : ${users}">
-                    <td>
-                        <a th:href="@{'/admin/users/' + ${summary.user.user_id}}" th:text="${summary.user.username}">username</a>
-                    </td>
-                    <td th:text="${summary.user.role}">USER</td>
-                    <td th:text="${summary.user.active ? 'Da' : 'Nu'}">Da</td>
-                    <td th:text="${summary.totalReservations}">0</td>
-                    <td th:text="${summary.upcomingReservations}">0</td>
-                    <td th:text="${summary.noShowCount}">0</td>
-                    <td>
-                        <span th:if="${summary.activeBlacklist == null}" class="status-pill status-ok">Fara restrictie</span>
-                        <span th:if="${summary.activeBlacklist != null}" class="status-pill status-danger">
-                            Pana la <span th:text="${#temporals.format(summary.activeBlacklist.endsAt, 'dd MMM HH:mm')}"></span>
-                        </span>
-                    </td>
-                    <td>
-                        <div class="admin-actions">
-                            <form th:if="${summary.activeBlacklist == null}"
-                                  th:action="@{'/admin/users/' + ${summary.user.user_id} + '/blacklist'}"
-                                  method="post">
-                                <input class="form-control form-control-sm" name="reason" placeholder="Motiv">
-                                <button type="submit" class="btn btn-danger btn-sm">Restrictioneaza 2 saptamani</button>
-                            </form>
-                            <form th:if="${summary.activeBlacklist != null}"
-                                  th:action="@{'/admin/blacklist/' + ${summary.activeBlacklist.blacklistId} + '/remove'}"
-                                  method="post">
-                                <button type="submit" class="btn btn-secondary btn-sm">Ridica restrictia</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section class="admin-section" id="reservations">
-        <div class="admin-section-heading">
-            <div>
-                <p class="eyebrow">Rezervari</p>
-                <h2>Activitate recenta</h2>
+            <div class="admin-cash-stat">
+                <span>De incasat</span>
+                <strong th:text="${pendingCount}">0</strong>
             </div>
-            <span class="price-pill">Ultimele 80</span>
-        </div>
-
-        <div class="table-responsive admin-table-wrap">
-            <table class="table table-bordered table-hover align-middle admin-table">
-                <thead class="table-dark">
-                <tr>
-                    <th>Data</th>
-                    <th>Ora</th>
-                    <th>Teren</th>
-                    <th>Utilizator</th>
-                    <th>Status</th>
-                    <th>Plata</th>
-                    <th>Prezenta</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="reservation : ${recentReservations}">
-                    <td th:text="${reservation.reservation_date}">date</td>
-                    <td th:text="${reservation.reservation_time}">time</td>
-                    <td th:text="${'Riviera ' + reservation.field_number}">Riviera 1</td>
-                    <td>
-                        <a th:href="@{'/admin/users/' + ${reservation.user.user_id}}" th:text="${reservation.user.username}">username</a>
-                    </td>
-                    <td>
-                        <span class="status-pill"
-                              th:classappend="${reservation.status == 'NO_SHOW'} ? ' status-danger' : (${reservation.status == 'ATTENDED'} ? ' status-ok' : ' status-neutral')"
-                              th:text="${reservation.statusLabel}">Rezervata</span>
-                    </td>
-                    <td>
-                        <span th:if="${reservation.payment != null}" th:text="${reservation.payment.statusLabel}">Plata</span>
-                        <span th:if="${reservation.payment == null}">Cash la teren</span>
-                    </td>
-                    <td>
-                        <div class="admin-actions attendance-actions">
-                            <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/attended'}" method="post">
-                                <button type="submit" class="btn btn-success btn-sm">Prezent</button>
-                            </form>
-                            <form th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/no-show'}" method="post">
-                                <input class="form-control form-control-sm" name="reason" placeholder="Motiv neprezentare">
-                                <button type="submit" class="btn btn-danger btn-sm">Neprezentare</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section class="admin-section" id="blacklist">
-        <div class="admin-section-heading">
-            <div>
-                <p class="eyebrow">Restrictii</p>
-                <h2>Restrictii active la rezervari</h2>
+            <div class="admin-cash-stat">
+                <span>Total zi</span>
+                <strong th:text="${selectedTotal + ' RON'}">0 RON</strong>
             </div>
-            <span class="price-pill" th:text="${activeBlacklists.size()} + ' active'">0 active</span>
-        </div>
+            <div class="admin-cash-stat paid">
+                <span>Incasat</span>
+                <strong th:text="${paidTotal + ' RON'}">0 RON</strong>
+            </div>
+        </section>
 
-        <div th:if="${activeBlacklists.isEmpty()}" class="alert alert-info">
-            Nu exista utilizatori restrictionati acum.
-        </div>
+        <section class="admin-reservations-panel" id="reservations">
+            <div class="admin-section-heading">
+                <div>
+                    <p class="eyebrow">Rezervari pe zi</p>
+                    <h2 th:text="${#temporals.format(selectedDate, 'dd MMM yyyy')}">28 Apr 2026</h2>
+                </div>
+                <span class="price-pill" th:text="${slotPrice + ' RON / ora'}">40 RON / ora</span>
+            </div>
 
-        <div th:if="${!activeBlacklists.isEmpty()}" class="table-responsive admin-table-wrap">
-            <table class="table table-bordered table-hover align-middle admin-table">
-                <thead class="table-dark">
-                <tr>
-                    <th>Utilizator</th>
-                    <th>Motiv</th>
-                    <th>Start</th>
-                    <th>Final</th>
-                    <th>Adaugat de</th>
-                    <th>Actiune</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="entry : ${activeBlacklists}">
-                    <td>
-                        <a th:href="@{'/admin/users/' + ${entry.user.user_id}}" th:text="${entry.user.username}">username</a>
-                    </td>
-                    <td th:text="${entry.reason}">Motiv</td>
-                    <td th:text="${#temporals.format(entry.startsAt, 'dd MMM yyyy HH:mm')}">Start</td>
-                    <td th:text="${#temporals.format(entry.endsAt, 'dd MMM yyyy HH:mm')}">Final</td>
-                    <td th:text="${entry.createdByAdmin != null ? entry.createdByAdmin.username : 'System'}">Admin</td>
-                    <td>
-                        <form th:action="@{'/admin/blacklist/' + ${entry.blacklistId} + '/remove'}" method="post">
-                            <button type="submit" class="btn btn-secondary btn-sm">Ridica</button>
+            <div th:if="${dayReservations.isEmpty()}" class="admin-empty-state">
+                <i class="bi bi-calendar2-check" aria-hidden="true"></i>
+                <h3>Nu sunt rezervari in ziua asta</h3>
+                <p>Alege alta zi din bara de sus.</p>
+            </div>
+
+            <div th:if="${!dayReservations.isEmpty()}" class="admin-reservation-list">
+                <article class="admin-reservation-card"
+                         th:each="reservation : ${dayReservations}"
+                         th:with="isPaid=${reservation.payment != null and reservation.payment.status == 'CONFIRMED'}"
+                         th:classappend="${isPaid} ? ' paid'">
+                    <div class="admin-reservation-time">
+                        <strong th:text="${reservation.reservation_time}">08:00 - 09:00</strong>
+                        <span th:text="${'Riviera ' + reservation.field_number}">Riviera 1</span>
+                    </div>
+
+                    <div class="admin-reservation-user">
+                        <span>Utilizator</span>
+                        <strong th:text="${reservation.user.username}">alex</strong>
+                    </div>
+
+                    <div class="admin-reservation-price">
+                        <span th:text="${slotPrice + ' RON'}">40 RON</span>
+                        <strong th:if="${isPaid}">Incasat</strong>
+                        <strong th:if="${!isPaid}">Cash la teren</strong>
+                    </div>
+
+                    <div class="admin-reservation-action">
+                        <form th:if="${!isPaid}"
+                              th:action="@{'/admin/reservations/' + ${reservation.reservation_id} + '/paid'}"
+                              method="post">
+                            <input type="hidden" name="date" th:value="${selectedDateIso}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                                <span>Marcheaza incasat</span>
+                            </button>
                         </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-</main>
 
-<script th:src="@{/js/pwa.js(v='booking-ui-9')}"></script>
+                        <span th:if="${isPaid}" class="admin-paid-pill">
+                            <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                            Plata confirmata
+                        </span>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+</div>
+
+<nav class="mobile-bottom-nav" aria-label="Navigatie mobila">
+    <a th:href="@{/home}"><i class="bi bi-grid-1x2"></i><span>Start</span></a>
+    <a th:href="@{/field/1}"><i class="bi bi-calendar2-week"></i><span>Terenuri</span></a>
+    <a th:href="@{/cart/view(source='home')}"><i class="bi bi-bag-check"></i><span>Cos</span></a>
+    <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profil</span></a>
+    <a th:href="@{/admin}" class="active"><i class="bi bi-speedometer2"></i><span>Admin</span></a>
+</nav>
+
+<script th:src="@{/js/pwa.js(v='booking-ui-14')}"></script>
 
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/icons/icon-192.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link th:href="@{/css/site.css(v='booking-ui-9')}" rel="stylesheet">
+    <link th:href="@{/css/site.css(v='booking-ui-14')}" rel="stylesheet">
 </head>
 <body class="bg-light schedule-page court-page court-one">
 
@@ -165,6 +165,7 @@
     <a th:href="@{/field/1}" class="active"><i class="bi bi-calendar2-week-fill"></i><span>Terenuri</span></a>
     <a th:href="@{/cart/view(fieldNumber=${fieldNumber})}"><i class="bi bi-bag-check"></i><span>Cos</span></a>
     <a th:href="@{/profile}"><i class="bi bi-person"></i><span>Profil</span></a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"><i class="bi bi-speedometer2"></i><span>Admin</span></a>
 </nav>
 
 <form id="addToCartForm" th:action="@{/cart/add}" method="post" style="display:none;">

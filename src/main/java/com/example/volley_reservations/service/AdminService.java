@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AdminService {
@@ -98,6 +100,11 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
+    public List<Reservation> getReservationsForDate(LocalDate date) {
+        return reservationRepository.findAdminReservationsForDate(date);
+    }
+
+    @Transactional(readOnly = true)
     public List<UserBlacklistEntry> getActiveBlacklists() {
         return blacklistService.findActiveEntries();
     }
@@ -107,6 +114,31 @@ public class AdminService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new EntityNotFoundException("Rezervarea nu a fost gasita"));
         reservation.setStatus(Reservation.STATUS_ATTENDED);
+    }
+
+    @Transactional
+    public LocalDate markReservationPaid(Integer reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Rezervarea nu a fost gasita"));
+
+        Payment payment = reservation.getPayment();
+        if (payment == null) {
+            payment = new Payment();
+            payment.setUser(reservation.getUser());
+            payment.setPaymentMethod(Payment.METHOD_CASH_AT_FIELD);
+            payment.setStatus(Payment.STATUS_PENDING);
+            payment.setAmountLei(BookingPricing.priceForSlot(reservation.getReservation_time()));
+            payment.setCreatedAt(LocalDateTime.now());
+            payment.setConfirmationToken(UUID.randomUUID().toString());
+            reservation.setPayment(paymentRepository.save(payment));
+        }
+
+        if (!Payment.STATUS_CONFIRMED.equals(payment.getStatus())) {
+            payment.setStatus(Payment.STATUS_CONFIRMED);
+            payment.setConfirmedAt(LocalDateTime.now());
+        }
+
+        return reservation.getReservation_date();
     }
 
     @Transactional
